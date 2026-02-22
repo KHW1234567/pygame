@@ -16,6 +16,15 @@ READY_PLAYBTN_W = 240
 READY_PLAYBTN_H = 60
 READY_PLAYBTN_Y_OFFSET = 40
 
+# [UI 개선 추가] 플로팅 텍스트 및 적 체력바 관련 수치
+FLOAT_TEXT_LIFETIME_MS = 800
+FLOAT_TEXT_RISE_SPEED = 0.05
+MINI_HP_BAR_W = 30
+MINI_HP_BAR_H = 6
+BOSS_HP_BAR_W = 200
+BOSS_HP_BAR_H = 15
+ICON_SIZE = 32  # [UI 개선 - 이미지 아이콘 적용] UI 아이콘 크기 설정
+
 # - 결과창: SpO2 카드(미니 HUD)
 RESULT_SPO2_CARD_X = 40
 RESULT_SPO2_CARD_Y = 40
@@ -99,18 +108,18 @@ BOSS_MAX_SPAWN = 3
 BOSS_WARNING_SEC = 3
 
 # - 네블라이저(필살기)
-NEBULIZER_ALL_ENEMY_HP_DEC = 5        # 효과량
-NEBULIZER_EFFECT_DURATION_MS = 1000   # 화면 연출(ms)
+NEBULIZER_ALL_ENEMY_HP_DEC = 5
+NEBULIZER_EFFECT_DURATION_MS = 1000
 
-POPUP_LIFETIME_MS = 1000              # 데미지 팝업 유지(ms)
-POPUP_RISE_PER_MS = 0.06              # 팝업 상승 속도
-POPUP_ALPHA_DEC_PER_MS = 0.28         # 팝업 투명도 감소
+POPUP_LIFETIME_MS = 1000
+POPUP_RISE_PER_MS = 0.06
+POPUP_ALPHA_DEC_PER_MS = 0.28
 
 # =====================================================
 # PATH
 # =====================================================
-IMG_PATH = "C:/python/MedicalDA05_pygame/image/"
-SOUND_PATH = "C:/python/MedicalDA05_pygame/sound/"
+IMG_PATH = "C:\\Python\\MedicalDA05_pygame-ver2-\\image\\"
+SOUND_PATH = "C:\\Python\\MedicalDA05_pygame\\sound\\"
 
 # =====================================================
 # INIT / DISPLAY
@@ -136,10 +145,10 @@ clock = pygame.time.Clock()
 # =====================================================
 # STATE (화면 전환)
 # =====================================================
-STATE_TITLE = 0   # 시작 화면
-STATE_INTRO = 1   # 인트로(스토리)
-STATE_READY = 2   # 준비 화면(PLAY)
-STATE_GAME = 3    # 게임 화면
+STATE_TITLE = 0
+STATE_INTRO = 1
+STATE_READY = 2
+STATE_GAME = 3
 game_state = STATE_TITLE
 
 # =====================================================
@@ -179,11 +188,21 @@ image_fail_bg = pygame.image.load(IMG_PATH + "fail.png")
 image_fail_bg = pygame.transform.scale(image_fail_bg, (BASE_WIDTH, BASE_HEIGHT))
 
 # =====================================================
-# LOAD / GAME (배경 + 오브젝트)
+# LOAD / GAME (배경 + 오브젝트 + UI 아이콘)
 # =====================================================
 # - 게임 배경
 image_bg = pygame.image.load(IMG_PATH + "background_highR.png")
 image_bg = pygame.transform.scale(image_bg, (BASE_WIDTH, BASE_HEIGHT))
+
+# [UI 개선 - 이미지 아이콘 적용] UI 아이콘 로드 및 크기 조절
+# ※ 실제 이미지 파일명으로 꼭 수정해주세요!
+image_icon_star = pygame.image.load(IMG_PATH + "star.png")
+image_icon_clock = pygame.image.load(IMG_PATH + "time.png")
+image_icon_spo2 = pygame.image.load(IMG_PATH + "o2.png")
+
+image_icon_star = pygame.transform.scale(image_icon_star, (ICON_SIZE, ICON_SIZE))
+image_icon_clock = pygame.transform.scale(image_icon_clock, (ICON_SIZE, ICON_SIZE))
+image_icon_spo2 = pygame.transform.scale(image_icon_spo2, (ICON_SIZE, ICON_SIZE))
 
 # -----------------------------------------------------
 # 폐포(플레이어), 총알
@@ -297,6 +316,8 @@ pygame.mixer.music.play(-1)
 # =====================================================
 font_small = pygame.font.SysFont(None, 40)
 font_big = pygame.font.SysFont(None, 80)
+# [UI 개선 추가] UI용 폰트 추가 (깔끔한 시스템 폰트 사용 추천, 없으면 기본폰트 사용됨)
+font_ui = pygame.font.SysFont("arial", 32, bold=True)
 
 retry_rect = pygame.Rect(BASE_WIDTH / 2 - 120, BASE_HEIGHT / 2 + 40, 240, 60)
 quit_rect = pygame.Rect(BASE_WIDTH / 2 - 120, BASE_HEIGHT / 2 + 120, 240, 60)
@@ -316,7 +337,7 @@ def get_non_overlap_x(existing_list, width, min_gap=10):
     return x
 
 # =====================================================
-# UI UTIL (결과창: SpO2 카드)
+# UI UTIL (결과창: SpO2 카드 및 신규 UI 함수)
 # =====================================================
 def draw_result_spo2_card(surface, x, y, spo2_value):
     # - 값 클램프
@@ -363,6 +384,45 @@ def draw_result_spo2_card(surface, x, y, spo2_value):
 
     surface.blit(card, (x, y))
 
+# [UI 개선 추가] 외곽선이 있는 텍스트 렌더링 함수 (가독성 향상)
+def draw_text_with_outline(surface, text, font, text_color, outline_color, x, y):
+    # 8방향 외곽선 그리기
+    for dx, dy in [(-2,-2), (-2,2), (2,-2), (2,2), (0,-2), (-2,0), (2,0), (0,2)]:
+        outline = font.render(text, True, outline_color)
+        surface.blit(outline, (x + dx, y + dy))
+    # 원본 텍스트 그리기
+    label = font.render(text, True, text_color)
+    surface.blit(label, (x, y))
+
+# [UI 개선 추가] 캡슐 형태의 게이지 바 그리기 함수 (SpO2 표시용)
+def draw_capsule_bar(surface, x, y, w, h, ratio, color, bg_color=(40, 40, 40)):
+    ratio = max(0.0, min(1.0, ratio))
+    # 배경 (빈 공간)
+    pygame.draw.rect(surface, bg_color, (x, y, w, h), border_radius=h//2)
+    # 채워진 공간
+    fill_w = int(w * ratio)
+    if fill_w > 0:
+        # 끝부분이 둥글게 채워지도록 border_radius 적용
+        pygame.draw.rect(surface, color, (x, y, fill_w, h), border_radius=h//2)
+    # 하이라이트 (유리관 질감 추가)
+    pygame.draw.rect(surface, (255, 255, 255), (x + h//4, y + 2, w - h//2, h//3), border_radius=h//3)
+    # 테두리
+    pygame.draw.rect(surface, (0, 0, 0), (x, y, w, h), width=2, border_radius=h//2)
+
+# [UI 개선 추가] 적 머리 위 미니 체력바 그리기
+def draw_mini_hp_bar(surface, x, y, current_hp, max_hp, is_boss=False):
+    if current_hp <= 0: return
+    ratio = current_hp / max_hp
+    bar_w = BOSS_HP_BAR_W if is_boss else MINI_HP_BAR_W
+    bar_h = BOSS_HP_BAR_H if is_boss else MINI_HP_BAR_H
+
+    # 배경 및 채우기
+    pygame.draw.rect(surface, (80, 0, 0), (x, y, bar_w, bar_h))
+    pygame.draw.rect(surface, (255, 50, 50), (x, y, int(bar_w * ratio), bar_h))
+    # 얇은 검은 테두리
+    pygame.draw.rect(surface, (0, 0, 0), (x, y, bar_w, bar_h), width=1)
+
+
 # =====================================================
 # GAME RESET (상태 초기화)
 # =====================================================
@@ -374,6 +434,9 @@ def reset_game():
     global last_boss_spawn, remaining_boss_images, boss_spawn_count, current_boss_image
 
     global broccolis, waters
+
+    # [UI 개선 추가] 플로팅 텍스트 리스트 추가
+    global floating_texts
 
     global nebulizers, nebulizer_spawned_times
     global nebulizer_effect, nebulizer_effect_start, damage_popups
@@ -401,6 +464,9 @@ def reset_game():
     # - 아이템
     broccolis = []
     waters = []
+
+    # [UI 개선 추가] 플로팅 텍스트 초기화
+    floating_texts = []
 
     # - 필살기(네블라이저)
     nebulizers = []
@@ -490,6 +556,9 @@ while play:
                 play = False
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                # [새로 추가된 부분] 인트로에서 스페이스바를 누를 때 효과음 재생
+                sfx_button.play() 
+
                 intro_index += 1
                 if intro_index >= len(intro_images):
                     game_state = STATE_READY
@@ -690,28 +759,28 @@ while play:
             for dust in dusts[:]:
                 dust[1] += DUST_SPEED
                 background.blit(image_dust, (dust[0], dust[1]))
-                background.blit(font_small.render(f"HP:{dust[2]}", True, (255, 0, 0)), (dust[0], dust[1] - 18))
+                draw_mini_hp_bar(background, dust[0] + size_dust_width/2 - MINI_HP_BAR_W/2, dust[1] - 12, dust[2], DUST_HP)
                 if dust[1] >= BASE_HEIGHT - size_dust_height:
                     game_over = True
 
             for food in foods[:]:
                 food[1] += FOOD_SPEED
                 background.blit(image_food, (food[0], food[1]))
-                background.blit(font_small.render(f"HP:{food[2]}", True, (255, 0, 0)), (food[0], food[1] - 18))
+                draw_mini_hp_bar(background, food[0] + size_food_width/2 - MINI_HP_BAR_W/2, food[1] - 12, food[2], FOOD_HP)
                 if food[1] >= BASE_HEIGHT - size_food_height:
                     game_over = True
 
             for cigarette in cigarettes[:]:
                 cigarette[1] += CIGARETTE_SPEED
                 background.blit(image_cigarette, (cigarette[0], cigarette[1]))
-                background.blit(font_small.render(f"HP:{cigarette[2]}", True, (255, 0, 0)), (cigarette[0], cigarette[1] - 18))
+                draw_mini_hp_bar(background, cigarette[0] + size_cigarette_width/2 - MINI_HP_BAR_W/2, cigarette[1] - 12, cigarette[2], CIGARETTE_HP)
                 if cigarette[1] >= BASE_HEIGHT - size_cigarette_height:
                     game_over = True
 
             if boss_alive:
                 y_pos_boss += BOSS_SPEED
                 background.blit(current_boss_image, (x_pos_boss, y_pos_boss))
-                background.blit(font_small.render(f"HP:{boss_hp}", True, (255, 0, 0)), (x_pos_boss, y_pos_boss - 25))
+                draw_mini_hp_bar(background, x_pos_boss + size_boss_width/2 - BOSS_HP_BAR_W/2, y_pos_boss - 25, boss_hp, BOSS_HP, is_boss=True)
                 if y_pos_boss >= BASE_HEIGHT - size_boss_height:
                     game_over = True
 
@@ -721,8 +790,6 @@ while play:
             for bro in broccolis[:]:
                 bro[1] += BROCCOLI_SPEED
                 background.blit(image_broccoli, (bro[0], bro[1]))
-                plus_text = font_small.render("+1", True, (0, 255, 0))
-                background.blit(plus_text, (bro[0] + size_broccoli_width / 2 - plus_text.get_width() / 2, bro[1] - 20))
 
                 if bro[1] >= BASE_HEIGHT - size_broccoli_height:
                     broccolis.remove(bro)
@@ -732,6 +799,10 @@ while play:
                     if (p[0] < bro[0] < p[0] + size_alveolus_width and
                         p[1] < bro[1] + size_broccoli_height < p[1] + size_alveolus_height):
                         sfx_item.play()
+
+                        # [UI 개선 추가] 획득 시 플로팅 텍스트 효과 추가
+                        floating_texts.append([p[0], p[1], "Size +1", (0, 255, 50), pygame.time.get_ticks()])
+
                         broccolis.remove(bro)
                         if len(players) < BROCCOLI_MAX_STACK:
                             offset = size_alveolus_width * BROCCOLI_INSERT_OFFSET_RATIO
@@ -744,8 +815,6 @@ while play:
             for water in waters[:]:
                 water[1] += WATER_SPEED
                 background.blit(image_water, (water[0], water[1]))
-                speed_text = font_small.render("Speed +1", True, (0, 150, 255))
-                background.blit(speed_text, (water[0] + size_water_width / 2 - speed_text.get_width() / 2, water[1] - 20))
 
                 if water[1] >= BASE_HEIGHT - size_water_height:
                     waters.remove(water)
@@ -755,6 +824,10 @@ while play:
                     if (p[0] < water[0] < p[0] + size_alveolus_width and
                         p[1] < water[1] + size_water_height < p[1] + size_alveolus_height):
                         sfx_item.play()
+
+                        # [UI 개선 추가] 획득 시 플로팅 텍스트 효과 추가
+                        floating_texts.append([p[0], p[1], "Speed UP!", (0, 200, 255), pygame.time.get_ticks()])
+
                         waters.remove(water)
                         move_speed += WATER_SPEED_GAIN
                         break
@@ -917,12 +990,66 @@ while play:
         for p in players:
             background.blit(image_alveolus, (p[0], p[1]))
 
-        background.blit(font_small.render(f"POINT : {point}", True, (0, 0, 0)), (10, 10))
-        background.blit(font_small.render(f"TIME : {time_left}", True, (0, 0, 0)), (BASE_WIDTH // 2 - 40, 15))
+        # [UI 개선 - 이미지 아이콘 적용] 상단 스코어 및 타이머 (아이콘 + 텍스트 배치)
+        # 1. 스코어 (별 아이콘)
+        icon_x_point = 20
+        icon_y_point = 20
+        background.blit(image_icon_star, (icon_x_point, icon_y_point))
+        # 아이콘 너비(ICON_SIZE) + 간격(10) 만큼 띄워서 숫자만 출력
+        draw_text_with_outline(background, f"{point}", font_ui, (255, 215, 0), (80, 50, 0), icon_x_point + ICON_SIZE + 10, icon_y_point)
 
-        pygame.draw.rect(background, (100, 100, 100), (50, 80, 600, 30))
-        pygame.draw.rect(background, (0, 255, 0), (50, 80, 6 * SpO2, 30))
-        background.blit(font_small.render(f"SpO2: {int(SpO2)}%", True, (0, 0, 0)), (50, 50))
+        # 2. 타이머 (시계 아이콘)
+        icon_x_time = BASE_WIDTH // 2 - 50
+        icon_y_time = 20
+        background.blit(image_icon_clock, (icon_x_time, icon_y_time))
+        # 아이콘 너비(ICON_SIZE) + 간격(10) 만큼 띄워서 숫자만 출력
+        draw_text_with_outline(background, f"{time_left}", font_ui, (255, 255, 255), (50, 50, 50), icon_x_time + ICON_SIZE + 10, icon_y_time)
+
+        # [UI 개선 - 이미지 아이콘 적용] 상단 캡슐형 SpO2 게이지 및 아이콘 교체
+        bar_w = 400
+        bar_h = 24
+        bar_x = BASE_WIDTH // 2 - bar_w // 2
+        bar_y = 65
+        ratio = SpO2 / 100.0
+
+        # SpO2 상태에 따라 게이지 색상 변경 (안전 초록 / 위험 빨강)
+        gauge_color = (0, 200, 100) if SpO2 >= SPO2_WIN_THRESHOLD else (255, 80, 80)
+        draw_capsule_bar(background, bar_x, bar_y, bar_w, bar_h, ratio, gauge_color)
+
+        # 3. SpO2 아이콘 및 텍스트 (게이지 바 위에 배치)
+        icon_x_spo2 = bar_x
+        icon_y_spo2 = bar_y - ICON_SIZE - 5 # 게이지 바 바로 위
+        background.blit(image_icon_spo2, (icon_x_spo2, icon_y_spo2))
+
+        spo2_text = f"{int(SpO2)}%"
+        # 아이콘 옆에 텍스트 배치, 색상은 게이지 색상과 맞춤
+        draw_text_with_outline(background, spo2_text, font_ui, gauge_color, (0, 0, 0), icon_x_spo2 + ICON_SIZE + 10, icon_y_spo2)
+
+        # [UI 개선 추가] 플로팅 텍스트(아이템 획득 효과) 업데이트 및 렌더링
+        current_time = pygame.time.get_ticks()
+        for f_text in floating_texts[:]:
+            f_x, f_y, text, color, start_time = f_text
+            dt = current_time - start_time
+
+            if dt > FLOAT_TEXT_LIFETIME_MS:
+                floating_texts.remove(f_text)
+                continue
+
+            # 위로 상승 애니메이션
+            f_text[1] -= FLOAT_TEXT_RISE_SPEED * clock.get_time()
+
+            # 투명도 계산 (서서히 사라짐)
+            alpha = max(0, 255 - int((dt / FLOAT_TEXT_LIFETIME_MS) * 255))
+
+            # 텍스트 렌더링 후 surface에 alpha값 적용
+            text_surf = font_ui.render(text, True, color)
+            # 투명도 적용을 위해 빈 surface 생성
+            alpha_surf = pygame.Surface(text_surf.get_size(), pygame.SRCALPHA)
+            alpha_surf.blit(text_surf, (0, 0))
+            alpha_surf.set_alpha(alpha)
+
+            # 캐릭터 약간 위 중앙에 표시
+            background.blit(alpha_surf, (f_x + size_alveolus_width/2 - text_surf.get_width()/2, f_y - 40))
 
         # - 보스 경고(화면 흔들림/플래시)
         if boss_warning:
