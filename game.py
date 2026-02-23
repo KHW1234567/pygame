@@ -11,10 +11,8 @@ FPS = 60
 
 # - UI/레이아웃(비율/위치)
 TITLE_NAME_Y_RATIO = 0.22
-TITLE_STARTBTN_Y_RATIO = 0.60
-READY_PLAYBTN_W = 240
-READY_PLAYBTN_H = 60
-READY_PLAYBTN_Y_OFFSET = 40
+# [UI 개선] 시작 버튼을 화면 중앙 하단으로 내리기 위해 비율 수정
+TITLE_STARTBTN_Y_RATIO = 0.85 
 
 # [UI 개선 추가] 플로팅 텍스트 및 적 체력바 관련 수치
 FLOAT_TEXT_LIFETIME_MS = 800
@@ -118,7 +116,7 @@ POPUP_ALPHA_DEC_PER_MS = 0.28
 # =====================================================
 # PATH
 # =====================================================
-IMG_PATH = "D:\\MHH\python\\MedicalDA05_pygame-ver2-\\image\\"
+IMG_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\image\\"
 SOUND_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\sound\\"
 
 # =====================================================
@@ -172,12 +170,12 @@ game_name_rect = image_game_name.get_rect(
     center=(BASE_WIDTH // 2, int(BASE_HEIGHT * TITLE_NAME_Y_RATIO))
 )
 
-# - READY(PLAY 버튼)
-play_rect_new = pygame.Rect(
-    BASE_WIDTH / 2 - READY_PLAYBTN_W / 2,
-    BASE_HEIGHT / 2 + READY_PLAYBTN_Y_OFFSET,
-    READY_PLAYBTN_W,
-    READY_PLAYBTN_H
+# [UI 개선] READY 화면(게임 직전) 시작 버튼 이미지 로드
+# transform.scale 대신 rotozoom을 사용하여 원본 비율 유지 (0.5 배율 적용)
+image_ready_start_button = pygame.image.load(IMG_PATH + "버튼_START.png")
+image_ready_start_button = pygame.transform.rotozoom(image_ready_start_button, 0, 0.8)
+ready_start_rect_img = image_ready_start_button.get_rect(
+    center=(BASE_WIDTH / 2, BASE_HEIGHT / 2 + 300) # 중앙 하단에 배치
 )
 
 # - 결과 화면(성공/실패 배경)
@@ -187,6 +185,16 @@ image_success_bg = pygame.transform.scale(image_success_bg, (BASE_WIDTH, BASE_HE
 image_fail_bg = pygame.image.load(IMG_PATH + "fail.png")
 image_fail_bg = pygame.transform.scale(image_fail_bg, (BASE_WIDTH, BASE_HEIGHT))
 
+# [UI 개선] RETRY 및 QUIT 버튼 이미지 로드 및 위치 지정
+# 역시 찌그러짐 방지를 위해 rotozoom(0.6 배율) 적용
+image_retry_button = pygame.image.load(IMG_PATH + "버튼_RETRY.png")
+image_retry_button = pygame.transform.rotozoom(image_retry_button, 0, 0.8)
+retry_rect_img = image_retry_button.get_rect(center=(BASE_WIDTH / 2, BASE_HEIGHT / 2 + 200))
+
+image_quit_button = pygame.image.load(IMG_PATH + "버튼_QUIT.png")
+image_quit_button = pygame.transform.rotozoom(image_quit_button, 0, 0.8)
+quit_rect_img = image_quit_button.get_rect(center=(BASE_WIDTH / 2, BASE_HEIGHT / 2 + 300))
+
 # =====================================================
 # LOAD / GAME (배경 + 오브젝트 + UI 아이콘)
 # =====================================================
@@ -195,7 +203,6 @@ image_bg = pygame.image.load(IMG_PATH + "background_highR.png")
 image_bg = pygame.transform.scale(image_bg, (BASE_WIDTH, BASE_HEIGHT))
 
 # [UI 개선 - 이미지 아이콘 적용] UI 아이콘 로드 및 크기 조절
-# ※ 실제 이미지 파일명으로 꼭 수정해주세요!
 image_icon_star = pygame.image.load(IMG_PATH + "star.png")
 image_icon_clock = pygame.image.load(IMG_PATH + "time.png")
 image_icon_spo2 = pygame.image.load(IMG_PATH + "o2.png")
@@ -316,12 +323,7 @@ pygame.mixer.music.play(-1)
 # =====================================================
 font_small = pygame.font.SysFont(None, 40)
 font_big = pygame.font.SysFont(None, 80)
-# [UI 개선 추가] UI용 폰트 추가 (깔끔한 시스템 폰트 사용 추천, 없으면 기본폰트 사용됨)
 font_ui = pygame.font.SysFont("arial", 32, bold=True)
-
-retry_rect = pygame.Rect(BASE_WIDTH / 2 - 120, BASE_HEIGHT / 2 + 40, 240, 60)
-quit_rect = pygame.Rect(BASE_WIDTH / 2 - 120, BASE_HEIGHT / 2 + 120, 240, 60)
-start_rect = pygame.Rect(BASE_WIDTH / 2 - 150, BASE_HEIGHT / 2 - 40, 300, 80)
 
 # =====================================================
 # UTIL (스폰 좌표 겹침 방지)
@@ -541,7 +543,7 @@ while play:
                 if start_button_rect_img.collidepoint(mx, my):
                     sfx_button.play()
                     intro_index = 0
-                    game_state = STATE_INTRO
+                    game_state = STATE_INTRO # 스토리(인트로)로 넘어감
 
         background.blit(image_game_start_bg, (0, 0))
         background.blit(image_game_name, game_name_rect)
@@ -579,7 +581,8 @@ while play:
                 mx /= scale_ratio
                 my /= scale_ratio
 
-                if play_rect_new.collidepoint(mx, my):
+                # [UI 개선] 파이게임 기본 도형(Rect)에서 준비된 시작 버튼 이미지(Rect) 클릭 판정으로 변경
+                if ready_start_rect_img.collidepoint(mx, my):
                     sfx_button.play()
                     sfx_start.play()
 
@@ -592,17 +595,9 @@ while play:
 
                     game_state = STATE_GAME
 
+        # [UI 개선] "Are you Ready?" 텍스트 렌더링 삭제 및 배경+시작 이미지 버튼만 렌더링
         background.blit(image_game_start_bg, (0, 0))
-
-        title_ready = font_big.render("Are you Ready?", True, (0, 0, 0))
-        background.blit(title_ready, (BASE_WIDTH / 2 - title_ready.get_width() / 2, BASE_HEIGHT / 2 - 200))
-
-        pygame.draw.rect(background, (0, 150, 255), play_rect_new)
-        play_txt = font_small.render("PLAY", True, (255, 255, 255))
-        background.blit(
-            play_txt,
-            (play_rect_new.centerx - play_txt.get_width() / 2, play_rect_new.centery - play_txt.get_height() / 2)
-        )
+        background.blit(image_ready_start_button, ready_start_rect_img)
 
     # -------------------------------------------------
     # GAME (플레이 화면)
@@ -618,13 +613,14 @@ while play:
             if event.type == pygame.QUIT:
                 play = False
 
-            # - 결과 화면 버튼
+            # - 결과 화면 버튼 처리
             if (game_over or success) and event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = pygame.mouse.get_pos()
                 mx /= scale_ratio
                 my /= scale_ratio
 
-                if retry_rect.collidepoint(mx, my):
+                # [UI 개선] RETRY 이미지 버튼 클릭 처리
+                if retry_rect_img.collidepoint(mx, my):
                     sfx_button.play()
                     reset_game()
                     game_started = True
@@ -632,7 +628,8 @@ while play:
                     pygame.mixer.music.load(music_game_file)
                     pygame.mixer.music.play(-1)
 
-                if quit_rect.collidepoint(mx, my):
+                # [UI 개선] QUIT 이미지 버튼 클릭 처리
+                if quit_rect_img.collidepoint(mx, my):
                     sfx_button.play()
                     play = False
 
@@ -991,41 +988,32 @@ while play:
             background.blit(image_alveolus, (p[0], p[1]))
 
         # [UI 개선 - 이미지 아이콘 적용] 상단 스코어 및 타이머 (아이콘 + 텍스트 배치)
-        # 1. 스코어 (별 아이콘)
         icon_x_point = 20
         icon_y_point = 20
         background.blit(image_icon_star, (icon_x_point, icon_y_point))
-        # 아이콘 너비(ICON_SIZE) + 간격(10) 만큼 띄워서 숫자만 출력
         draw_text_with_outline(background, f"{point}", font_ui, (255, 215, 0), (80, 50, 0), icon_x_point + ICON_SIZE + 10, icon_y_point)
 
-        # 2. 타이머 (시계 아이콘)
         icon_x_time = BASE_WIDTH // 2 - 50
         icon_y_time = 20
         background.blit(image_icon_clock, (icon_x_time, icon_y_time))
-        # 아이콘 너비(ICON_SIZE) + 간격(10) 만큼 띄워서 숫자만 출력
         draw_text_with_outline(background, f"{time_left}", font_ui, (255, 255, 255), (50, 50, 50), icon_x_time + ICON_SIZE + 10, icon_y_time)
 
-        # [UI 개선 - 이미지 아이콘 적용] 상단 캡슐형 SpO2 게이지 및 아이콘 교체
         bar_w = 400
         bar_h = 24
         bar_x = BASE_WIDTH // 2 - bar_w // 2
         bar_y = 65
         ratio = SpO2 / 100.0
 
-        # SpO2 상태에 따라 게이지 색상 변경 (안전 초록 / 위험 빨강)
         gauge_color = (0, 200, 100) if SpO2 >= SPO2_WIN_THRESHOLD else (255, 80, 80)
         draw_capsule_bar(background, bar_x, bar_y, bar_w, bar_h, ratio, gauge_color)
 
-        # 3. SpO2 아이콘 및 텍스트 (게이지 바 위에 배치)
         icon_x_spo2 = bar_x
-        icon_y_spo2 = bar_y - ICON_SIZE - 5 # 게이지 바 바로 위
+        icon_y_spo2 = bar_y - ICON_SIZE - 5
         background.blit(image_icon_spo2, (icon_x_spo2, icon_y_spo2))
 
         spo2_text = f"{int(SpO2)}%"
-        # 아이콘 옆에 텍스트 배치, 색상은 게이지 색상과 맞춤
         draw_text_with_outline(background, spo2_text, font_ui, gauge_color, (0, 0, 0), icon_x_spo2 + ICON_SIZE + 10, icon_y_spo2)
 
-        # [UI 개선 추가] 플로팅 텍스트(아이템 획득 효과) 업데이트 및 렌더링
         current_time = pygame.time.get_ticks()
         for f_text in floating_texts[:]:
             f_x, f_y, text, color, start_time = f_text
@@ -1035,23 +1023,16 @@ while play:
                 floating_texts.remove(f_text)
                 continue
 
-            # 위로 상승 애니메이션
             f_text[1] -= FLOAT_TEXT_RISE_SPEED * clock.get_time()
-
-            # 투명도 계산 (서서히 사라짐)
             alpha = max(0, 255 - int((dt / FLOAT_TEXT_LIFETIME_MS) * 255))
 
-            # 텍스트 렌더링 후 surface에 alpha값 적용
             text_surf = font_ui.render(text, True, color)
-            # 투명도 적용을 위해 빈 surface 생성
             alpha_surf = pygame.Surface(text_surf.get_size(), pygame.SRCALPHA)
             alpha_surf.blit(text_surf, (0, 0))
             alpha_surf.set_alpha(alpha)
 
-            # 캐릭터 약간 위 중앙에 표시
             background.blit(alpha_surf, (f_x + size_alveolus_width/2 - text_surf.get_width()/2, f_y - 40))
 
-        # - 보스 경고(화면 흔들림/플래시)
         if boss_warning:
             elapsed = (pygame.time.get_ticks() - boss_warning_start) / 1000
             if elapsed > BOSS_WARNING_SEC:
@@ -1067,7 +1048,6 @@ while play:
                 txt = font_big.render("BOSS WARNING !!!", True, (255, 255, 0))
                 background.blit(txt, (BASE_WIDTH / 2 - txt.get_width() / 2, BASE_HEIGHT / 2 - 200))
 
-        # - 네블라이저 연출(좌측 구역 강조)
         if nebulizer_effect:
             elapsed_ms = pygame.time.get_ticks() - nebulizer_effect_start
             if elapsed_ms > NEBULIZER_EFFECT_DURATION_MS:
@@ -1081,7 +1061,6 @@ while play:
                 neb_txt = font_big.render("NEBULIZER!", True, (0, 0, 0))
                 background.blit(neb_txt, (BASE_WIDTH / 2 - neb_txt.get_width() / 2, 500))
 
-        # - 데미지 팝업(-N)
         for popup in damage_popups[:]:
             x, y, st = popup
             dt = pygame.time.get_ticks() - st
@@ -1125,13 +1104,9 @@ while play:
             # - 결과창 SpO2 카드(미니 HUD)
             draw_result_spo2_card(background, RESULT_SPO2_CARD_X, RESULT_SPO2_CARD_Y, SpO2)
 
-            pygame.draw.rect(background, (0, 200, 0), retry_rect)
-            rt_txt = font_small.render("RETRY", True, (255, 255, 255))
-            background.blit(rt_txt, (retry_rect.centerx - rt_txt.get_width() / 2, retry_rect.centery - rt_txt.get_height() / 2))
-
-            pygame.draw.rect(background, (200, 0, 0), quit_rect)
-            qt_txt = font_small.render("QUIT", True, (255, 255, 255))
-            background.blit(qt_txt, (quit_rect.centerx - qt_txt.get_width() / 2, quit_rect.centery - qt_txt.get_height() / 2))
+            # [UI 개선] 기존 사각형 그리기 대신 이미지 버튼 렌더링
+            background.blit(image_retry_button, retry_rect_img)
+            background.blit(image_quit_button, quit_rect_img)
 
     # =====================================================
     # PRESENT (스케일링 출력)
