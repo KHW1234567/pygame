@@ -118,8 +118,8 @@ POPUP_ALPHA_DEC_PER_MS = 0.28
 # =====================================================
 # PATH
 # =====================================================
-IMG_PATH = "C:\\Python\\MedicalDA05_pygame-ver2-\\image\\"
-SOUND_PATH = "C:\\Python\\MedicalDA05_pygame\\sound\\"
+IMG_PATH = "D:\\MHH\python\\MedicalDA05_pygame-ver2-\\image\\"
+SOUND_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\sound\\"
 
 # =====================================================
 # INIT / DISPLAY
