@@ -36,6 +36,8 @@ SCALE_BROCCOLI = 0.3
 SCALE_WATER = 0.3
 
 NEBULIZER_SCALE = 0.15
+# [수정됨: 1. 네블라이저 팝업(이펙트) 이미지 크기 조절 변수 추가]
+NEBULIZER_EFFECT_SCALE = 0.5
 
 # - 이동/속도
 PLAYER_BASE_SPEED = 3
@@ -62,7 +64,7 @@ CIGARETTE_SPAWN_INTERVAL = 2
 BROCCOLI_SPAWN_INTERVAL = 2
 WATER_SPAWN_INTERVAL = 5
 
-NEBULIZER_SPAWN_TIMES = [15, 30, 45]
+NEBULIZER_SPAWN_TIMES = [18, 33, 48]
 
 # - HP/점수/조건
 SPO2_START = 100
@@ -85,7 +87,6 @@ SPO2_GAIN_FOOD = 3
 SPO2_GAIN_CIGARETTE = 5
 SPO2_GAIN_BOSS = 10
 
-# [수정됨: 최대 병사 수를 30으로 늘리고, 한 줄당 기준(10명) 설정]
 BROCCOLI_MAX_STACK = 30
 ROW_CAPACITY = 10
 BROCCOLI_INSERT_OFFSET_RATIO = 0.33
@@ -201,6 +202,13 @@ try:
     image_boss_warning = pygame.transform.rotozoom(image_boss_warning, 0, 0.7) 
 except:
     image_boss_warning = None
+
+# [수정됨: 2. 스케일 변수(NEBULIZER_EFFECT_SCALE)를 적용하여 이미지 로드]
+try:
+    image_nebulizer_effect = pygame.image.load(IMG_PATH + "effect_네불라이저.png")
+    image_nebulizer_effect = pygame.transform.rotozoom(image_nebulizer_effect, 0, NEBULIZER_EFFECT_SCALE) 
+except:
+    image_nebulizer_effect = None
 
 # =====================================================
 # LOAD / GAME (배경 + 오브젝트 + UI 아이콘)
@@ -321,7 +329,7 @@ try:
     font_big = pygame.font.Font(font_full_path, 50)
     font_ui = pygame.font.Font(font_full_path, 34)
 except:
-    print("⚠️ 커스텀 폰트를 찾을 수 없습니다. 기본 폰트로 실행합니다.")
+    print("커스텀 폰트를 찾을 수 없습니다. 기본 폰트로 실행합니다.")
     font_small = pygame.font.SysFont("arial", 28, bold=True)
     font_big = pygame.font.SysFont("arial", 50, bold=True)
     font_ui = pygame.font.SysFont("arial", 34, bold=True)
@@ -610,7 +618,6 @@ while play:
             for p in players:
                 p[0] += to_x
 
-            # [수정됨: 진형(행)이 여러 개 생겨도 전체 무리가 화면 밖으로 나가지 않도록 하는 방어 로직]
             if len(players) > 0:
                 min_x = min(p[0] for p in players)
                 if min_x < 0:
@@ -719,7 +726,7 @@ while play:
                     game_over = True
 
             # -----------------------------
-            # 아이템 렌더 및 충돌 (병사 추가 배치 로직)
+            # 아이템 렌더 및 충돌 
             # -----------------------------
             for bro in broccolis[:]:
                 bro[1] += BROCCOLI_SPEED
@@ -733,21 +740,18 @@ while play:
                     if (p[0] < bro[0] < p[0] + size_alveolus_width and
                         p[1] < bro[1] + size_broccoli_height < p[1] + size_alveolus_height):
                         sfx_item.play()
-                        floating_texts.append([p[0], p[1], "Size +1", (0, 255, 50), pygame.time.get_ticks()])
+                        floating_texts.append([p[0], p[1], "Squad +1", (0, 255, 50), pygame.time.get_ticks()])
                         broccolis.remove(bro)
                         
-                        # [수정됨: 10명 단위로 병사를 새로운 행에 배치하는 로직]
                         if len(players) < BROCCOLI_MAX_STACK:
                             offset_x = size_alveolus_width * BROCCOLI_INSERT_OFFSET_RATIO
-                            offset_y = size_alveolus_height * 0.6  # Y축으로 겹쳐 보일 간격
+                            offset_y = size_alveolus_height * 0.6  
                             
                             if len(players) % ROW_CAPACITY == 0:
-                                # 10명, 20명일 때 새로운 줄(위쪽)에 배치 시작
                                 rightmost_x = max(pl[0] for pl in players)
                                 top_y = min(pl[1] for pl in players)
                                 players.insert(0, [rightmost_x, top_y - offset_y])
                             else:
-                                # 같은 줄(왼쪽)에 계속 이어 붙임
                                 players.insert(0, [players[0][0] - offset_x, players[0][1]])
                         break
 
@@ -771,8 +775,6 @@ while play:
             for neb in nebulizers[:]:
                 neb[1] += NEBULIZER_SPEED
                 background.blit(image_nebulizer, (neb[0], neb[1]))
-                skill_txt = font_small.render(f"All enemies HP -{NEBULIZER_ALL_ENEMY_HP_DEC}", True, (0, 0, 0))
-                background.blit(skill_txt, (neb[0] + size_nebulizer_width / 2 - skill_txt.get_width() / 2, neb[1] - skill_txt.get_height() - 6))
 
                 if neb[1] >= BASE_HEIGHT - size_nebulizer_height:
                     nebulizers.remove(neb)
@@ -789,6 +791,9 @@ while play:
 
                 if neb_collected:
                     sfx_nebulizer.play()
+                    
+                    floating_texts.append([players[0][0], players[0][1], "DAMAGE ALL -5", (0, 220, 255), pygame.time.get_ticks()])
+                    
                     nebulizers.remove(neb)
                     nebulizer_effect = True
                     nebulizer_effect_start = pygame.time.get_ticks()
@@ -890,9 +895,6 @@ while play:
         # DRAW: 플레이어 / HUD
         # =================================================
         
-        # [수정됨: Z-index (깊이) 정렬 렌더링]
-        # Y좌표(세로 위치)를 기준으로 오름차순 정렬하여 위쪽에 있는 병사를 먼저 그리고,
-        # 아래쪽에 있는 병사를 나중에 그려 자연스럽게 겹쳐 보이도록 합니다.
         for p in sorted(players, key=lambda val: val[1]):
             background.blit(image_alveolus, (p[0], p[1]))
 
@@ -965,8 +967,13 @@ while play:
                 flash.set_alpha(90)
                 flash.fill((0, 220, 255))
                 background.blit(flash, (0, 0))
-                neb_txt = font_big.render("NEBULIZER!", True, (0, 0, 0))
-                background.blit(neb_txt, (BASE_WIDTH / 2 - neb_txt.get_width() / 2, 500))
+                
+                if image_nebulizer_effect:
+                    neb_eff_rect = image_nebulizer_effect.get_rect(center=(BASE_WIDTH / 2, BASE_HEIGHT / 2 - 200)) 
+                    background.blit(image_nebulizer_effect, neb_eff_rect)
+                else:
+                    neb_txt = font_big.render("NEBULIZER!", True, (0, 0, 0))
+                    background.blit(neb_txt, (BASE_WIDTH / 2 - neb_txt.get_width() / 2, 500))
 
         for popup in damage_popups[:]:
             x, y, st = popup
