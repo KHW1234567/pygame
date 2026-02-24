@@ -12,7 +12,7 @@ FPS = 60                      # 초당 프레임 수 (게임 속도 기준)
 
 # SpO2 및 시간 관련
 SPO2_START = 100              # 게임 시작 시 초기 산소포화도(SpO2) 수치
-SPO2_DECAY_PER_SEC = 3.5      # 1초당 감소하는 산소포화도 수치 (100부터 1초마다 3.5씩 감소)
+SPO2_DECAY_PER_SEC = 4        # 1초당 감소하는 산소포화도 수치 (100부터 1초마다 4씩 감소)
 SPO2_WIN_THRESHOLD = 90       # 제한시간 내에 유지해야 하는 최소 SpO2 수치 (90% 이상이면 성공)
 TIME_LIMIT = 60               # 게임 시간 제한 (초)
 
@@ -40,19 +40,19 @@ WATER_SPEED = 2.5             # 물
 NEBULIZER_SPEED = 2.0         # 네불라이저
 
 # 스폰 (등장 및 생성 주기)
-DUST_SPAWN_INTERVAL = 0.15            # 먼지가 생성되는 간격
-FOOD_SPAWN_START = 10                 # 고지방/고단백 처음 등장하기 시작하는 시간 (10초 후)
-FOOD_SPAWN_INTERVAL = 1               # 고지방/고단백 생성되는 간격
-CIGARETTE_SPAWN_START = 15            # 담배가 처음 등장하기 시작하는 시간 (15초 후)
-CIGARETTE_SPAWN_INTERVAL = 2          # 담배가 생성되는 간격
-BROCCOLI_SPAWN_INTERVAL = 2           # 브로콜리 아이템 생성 간격
-WATER_SPAWN_INTERVAL = 5              # 물 아이템 생성 간격
-NEBULIZER_SPAWN_TIMES = [18, 33, 48]  # 네불라이저가 떨어지는 특정 시간대(초) 리스트
+DUST_SPAWN_INTERVAL = 0.15             # 먼지가 생성되는 간격
+FOOD_SPAWN_START = 10                  # 고지방/고단백 처음 등장하기 시작하는 시간 (10초 후)
+FOOD_SPAWN_INTERVAL = 1                # 고지방/고단백 생성되는 간격
+CIGARETTE_SPAWN_START = 15             # 담배가 처음 등장하기 시작하는 시간 (15초 후)
+CIGARETTE_SPAWN_INTERVAL = 2           # 담배가 생성되는 간격
+BROCCOLI_SPAWN_INTERVAL = 2            # 브로콜리 아이템 생성 간격
+WATER_SPAWN_INTERVAL = 5               # 물 아이템 생성 간격
+NEBULIZER_SPAWN_TIMES = [18, 33, 48]   # 네불라이저가 떨어지는 특정 시간대(초) 리스트
 
 # 보스 스폰 관련 (초 단위)
 BOSS_FIRST_DELAY = 20            # 게임 시작 후 보스가 최초로 등장하기까지 걸리는 시간
 BOSS_INTERVAL = 15               # 보스 연속 등장 간격
-BOSS_MAX_SPAWN = 3               # 한 게임당 등장할 수 있는 보스의 최대 횟수
+BOSS_MAX_SPAWN = 3               # 한 게임당 등장할 수 있는 보스 최대 횟수
 BOSS_WARNING_SEC = 3             # 보스 등장 경고창(Warning)이 화면에 유지되는 시간
 
 # 적군 체력 설정
@@ -76,8 +76,8 @@ SPO2_GAIN_BOSS = 10              # 보스
 # 플레이어(폐포 병사) 아이템 획득 효과 설정
 BROCCOLI_MAX_STACK = 30               # 브로콜리를 먹고 늘어날 수 있는 최대 병사 수
 ROW_CAPACITY = 10                     # 한 줄에 배치되는 최대 병사 수 (10명이 넘으면 윗줄로 쌓임)
-BROCCOLI_INSERT_OFFSET_RATIO = 0.33   # 기존 병사의 33%만큼 왼쪽으로 이동하여 새로운 병사 추가
-WATER_SPEED_GAIN = 1                  # 물을 먹었을 때 증가하는 플레이어 이동 속도
+BROCCOLI_INSERT_OFFSET_RATIO = 0.33   # 새로운 병사(폐포)가 왼쪽으로 추가되는 간격 (기존 병사의 33% 정도 겹치게 배치)
+WATER_SPEED_GAIN = 1                  # 물을 먹었을 때 증가하는 플레이어 이동 속도 (1씩 증가)
 
 # 네불라이저(필살기) 관련 설정
 NEBULIZER_ALL_ENEMY_HP_DEC = 5        # 네불라이저 획득 시 모든 적의 체력을 깎는 수치
@@ -91,11 +91,11 @@ POPUP_ALPHA_DEC_PER_MS = 0.28   # 데미지 숫자가 서서히 투명해지는 
 # 플로팅 텍스트 및 적 체력바 관련 수치
 FLOAT_TEXT_LIFETIME_MS = 800     # 머리 위로 뜨는 텍스트(데미지 등)가 유지되는 시간 (밀리초)
 FLOAT_TEXT_RISE_SPEED = 0.05     # 머리 위로 뜨는 텍스트가 위로 올라가는 속도
-MINI_HP_BAR_W = 30               # 일반 적군(먼지, 음식 등) 미니 체력바의 가로 넓이
-MINI_HP_BAR_H = 6                # 일반 적군 미니 체력바의 세로 높이
-BOSS_HP_BAR_W = 200              # 보스 체력바의 가로 넓이
-BOSS_HP_BAR_H = 15               # 보스 체력바의 세로 높이
-ICON_SIZE = 32                   # 화면 상단 정보 UI(별, 시계, 산소)의 아이콘 크기
+MINI_HP_BAR_W = 30               # 적군 미니 체력바 가로 넓이
+MINI_HP_BAR_H = 6                # 적군 미니 체력바 세로 높이
+BOSS_HP_BAR_W = 200              # 보스 체력바 가로 넓이
+BOSS_HP_BAR_H = 15               # 보스 체력바 세로 높이
+ICON_SIZE = 32                   # 화면 상단 정보 UI(별, 시계, 산소) 아이콘 크기
 
 # 시작화면 UI/레이아웃
 TITLE_NAME_Y_RATIO = 0.22         # 타이틀 화면의 게임 로고 Y축 위치 비율 (화면 상단 기준)
@@ -124,9 +124,9 @@ background = pygame.Surface((BASE_WIDTH, BASE_HEIGHT))     # 내부적으로 그
 pygame.display.set_caption("강철폐포부대")                  # 창 상단에 표시될 게임 제목
 clock = pygame.time.Clock()                                # FPS 및 시간 계산을 위한 시계 객체
 
-# 게임 상태를 나타내는 고유 번호 (0: 타이틀, 1: 스토리 인트로, 2: 레디 화면, 3: 본 게임)
-STATE_TITLE, STATE_INTRO, STATE_READY, STATE_GAME = 0, 1, 2, 3
-game_state = STATE_TITLE   # 현재 게임 상태를 타이틀 화면으로 초기화
+# 게임 상태를 나타내는 고유 번호 (0: 시작 화면, 1: 스토리, 2: 준비 화면, 3: 본 게임)
+STATE_START, STATE_INTRO, STATE_READY, STATE_GAME = 0, 1, 2, 3
+game_state = STATE_START   # 현재 게임 상태를 시작 화면으로 초기화
 
 # =====================================================
 # 3. LOAD & SCALE (이미지, 효과음, 폰트 로드 및 크기 조절)
@@ -323,8 +323,8 @@ while play:
     for ev in pygame.event.get():
         if ev.type == pygame.QUIT: play = False # 창의 X 버튼을 누르면 루프 종료
         
-        # [타이틀 화면] 시작 버튼 클릭 감지
-        if game_state == STATE_TITLE and ev.type == pygame.MOUSEBUTTONDOWN:
+        # [시작 화면] 시작 버튼 클릭 감지
+        if game_state == STATE_START and ev.type == pygame.MOUSEBUTTONDOWN:
             mx, my = ev.pos[0]/scale_ratio, ev.pos[1]/scale_ratio # 모니터 배율에 맞게 클릭 좌표 보정
             if rect_btn_start.collidepoint(mx, my): # 마우스 위치가 버튼 사각형 영역 안에 있는지 확인
                 if sfx_btn: sfx_btn.play()
@@ -371,7 +371,7 @@ while play:
                     to_x = 0 # 방향키에서 손을 떼면 이동 정지
 
     # 상태별 배경화면 렌더링
-    if game_state == STATE_TITLE:
+    if game_state == STATE_START:
         background.blit(img_start_bg, (0,0)); background.blit(img_name, rect_name); background.blit(img_btn_start, rect_btn_start)
     elif game_state == STATE_INTRO:
         if intro_idx < len(intro_imgs): background.blit(intro_imgs[intro_idx], (0,0))
