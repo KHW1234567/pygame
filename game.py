@@ -3,1066 +3,639 @@ import random
 import os
 
 # =====================================================
-# TUNING / BALANCE (수치 조절)
+# 1. TUNING / BALANCE (수치 조절: 게임 밸런싱 관련 파라미터 모음)
 # =====================================================
 # - 화면/프레임
-BASE_WIDTH = 700
-BASE_HEIGHT = 900
-FPS = 60
+BASE_WIDTH = 700            # 기준 화면 가로 해상도
+BASE_HEIGHT = 900           # 기준 화면 세로 해상도
+FPS = 60                    # 초당 프레임 수 (게임 속도 기준)
 
 # - UI/레이아웃(비율/위치)
-TITLE_NAME_Y_RATIO = 0.22
-TITLE_STARTBTN_Y_RATIO = 0.85 
+TITLE_NAME_Y_RATIO = 0.22   # 타이틀 화면의 게임 로고 Y축 위치 비율 (화면 상단 기준)
+TITLE_STARTBTN_Y_RATIO = 0.85 # 타이틀 화면의 시작 버튼 Y축 위치 비율 (화면 하단 기준)
 
 # 플로팅 텍스트 및 적 체력바 관련 수치
-FLOAT_TEXT_LIFETIME_MS = 800
-FLOAT_TEXT_RISE_SPEED = 0.05
-MINI_HP_BAR_W = 30
-MINI_HP_BAR_H = 6
-BOSS_HP_BAR_W = 200
-BOSS_HP_BAR_H = 15
-ICON_SIZE = 32  
+FLOAT_TEXT_LIFETIME_MS = 800  # 머리 위로 뜨는 텍스트(데미지 등)가 유지되는 시간 (밀리초)
+FLOAT_TEXT_RISE_SPEED = 0.05  # 머리 위로 뜨는 텍스트가 위로 올라가는 속도
+MINI_HP_BAR_W = 30            # 일반 적군(먼지, 음식 등) 미니 체력바의 가로 너비
+MINI_HP_BAR_H = 6             # 일반 적군 미니 체력바의 세로 높이
+BOSS_HP_BAR_W = 200           # 보스 체력바의 가로 너비
+BOSS_HP_BAR_H = 15            # 보스 체력바의 세로 높이
+ICON_SIZE = 32                # 화면 상단 정보 UI(별, 시계, 산소)의 아이콘 크기
 
-# - 스케일(이미지 크기)
-SCALE_ALVEOLUS = 0.35
-SCALE_BULLET = 0.3
-
-SCALE_DUST = 0.3
-SCALE_FOOD = 0.5
-SCALE_CIGARETTE = 0.7
-SCALE_BOSS = 1.2
-
-SCALE_BROCCOLI = 0.3
-SCALE_WATER = 0.3
-
-NEBULIZER_SCALE = 0.15
-# [수정됨: 1. 네블라이저 팝업(이펙트) 이미지 크기 조절 변수 추가]
-NEBULIZER_EFFECT_SCALE = 0.5
+# - 스케일(이미지 크기 비율)
+SCALE_ALVEOLUS = 0.35         # 플레이어(폐포 병사) 이미지 배율
+SCALE_BULLET = 0.3            # 총알 이미지 배율
+SCALE_DUST = 0.3              # 먼지(적) 이미지 배율
+SCALE_FOOD = 0.5              # 패스트푸드(적) 이미지 배율
+SCALE_CIGARETTE = 0.7         # 담배(적) 이미지 배율
+SCALE_BOSS = 1.2              # 보스 이미지 배율
+SCALE_BROCCOLI = 0.3          # 브로콜리(아이템) 이미지 배율
+SCALE_WATER = 0.3             # 물(아이템) 이미지 배율
+NEBULIZER_SCALE = 0.15        # 네블라이저(필살기 아이템) 이미지 배율
+NEBULIZER_EFFECT_SCALE = 0.5  # 네블라이저 발동 시 화면에 뜨는 팝업 이펙트 이미지 배율
 
 # - 이동/속도
-PLAYER_BASE_SPEED = 3
-BULLET_SPEED = 8
+PLAYER_BASE_SPEED = 3         # 플레이어 좌우 이동 기본 속도
+BULLET_SPEED = 8              # 발사된 총알이 위로 날아가는 속도
+DUST_SPEED = 2.0              # 먼지가 떨어지는 속도
+FOOD_SPEED = 1.5              # 패스트푸드가 떨어지는 속도
+CIGARETTE_SPEED = 1.0         # 담배가 떨어지는 속도
+BOSS_SPEED = 1.2              # 보스가 떨어지는 속도
+BROCCOLI_SPEED = 2.5          # 브로콜리가 떨어지는 속도
+WATER_SPEED = 2.5             # 물이 떨어지는 속도
+NEBULIZER_SPEED = 2.0         # 네블라이저 아이템이 떨어지는 속도
 
-DUST_SPEED = 2.0
-FOOD_SPEED = 1.5
-CIGARETTE_SPEED = 1.0
-BOSS_SPEED = 1.2
-
-BROCCOLI_SPEED = 2.5
-WATER_SPEED = 2.5
-NEBULIZER_SPEED = 2.0
-
-# - 스폰(초 단위)
-DUST_SPAWN_INTERVAL = 0.15
-
-FOOD_SPAWN_START = 10
-FOOD_SPAWN_INTERVAL = 1
-
-CIGARETTE_SPAWN_START = 15
-CIGARETTE_SPAWN_INTERVAL = 2
-
-BROCCOLI_SPAWN_INTERVAL = 2
-WATER_SPAWN_INTERVAL = 5
-
-NEBULIZER_SPAWN_TIMES = [18, 33, 48]
+# - 스폰(초 단위: 등장 주기)
+DUST_SPAWN_INTERVAL = 0.15       # 먼지가 생성되는 간격 (초)
+FOOD_SPAWN_START = 10            # 패스트푸드가 처음 등장하기 시작하는 시간 (10초 후)
+FOOD_SPAWN_INTERVAL = 1          # 패스트푸드가 생성되는 간격 (초)
+CIGARETTE_SPAWN_START = 15       # 담배가 처음 등장하기 시작하는 시간 (15초 후)
+CIGARETTE_SPAWN_INTERVAL = 2     # 담배가 생성되는 간격 (초)
+BROCCOLI_SPAWN_INTERVAL = 2      # 브로콜리 아이템 생성 간격 (초)
+WATER_SPAWN_INTERVAL = 5         # 물 아이템 생성 간격 (초)
+NEBULIZER_SPAWN_TIMES = [18, 33, 48] # 네블라이저가 떨어지는 특정 시간대(초) 리스트
 
 # - HP/점수/조건
-SPO2_START = 100
-SPO2_DECAY_PER_SEC = 3.0
-SPO2_WIN_THRESHOLD = 90
-TIME_LIMIT = 60
+SPO2_START = 100                 # 게임 시작 시 초기 산소포화도(SpO2) 수치
+SPO2_DECAY_PER_SEC = 3.0         # 1초당 자연적으로 감소하는 산소포화도 수치
+SPO2_WIN_THRESHOLD = 90          # 게임 클리어 시 승리(SUCCESS)로 인정되는 최소 산소포화도 수치
+TIME_LIMIT = 60                  # 한 판의 총 제한 시간 (초)
 
-DUST_HP = 1
-FOOD_HP = 3
-CIGARETTE_HP = 5
-BOSS_HP = 70
+# 적 체력 설정
+DUST_HP = 1                      # 먼지 체력
+FOOD_HP = 3                      # 패스트푸드 체력
+CIGARETTE_HP = 5                 # 담배 체력
+BOSS_HP = 70                     # 보스 체력
 
-SCORE_DUST = 1
-SCORE_FOOD = 3
-SCORE_CIGARETTE = 5
-SCORE_BOSS = 10
+# 처치 시 획득 점수
+SCORE_DUST = 1                   
+SCORE_FOOD = 3                   
+SCORE_CIGARETTE = 5              
+SCORE_BOSS = 10                  
 
-SPO2_GAIN_DUST = 1
-SPO2_GAIN_FOOD = 3
-SPO2_GAIN_CIGARETTE = 5
-SPO2_GAIN_BOSS = 10
+# 처치 시 회복되는 산소포화도(SpO2)
+SPO2_GAIN_DUST = 1               
+SPO2_GAIN_FOOD = 3               
+SPO2_GAIN_CIGARETTE = 5          
+SPO2_GAIN_BOSS = 10              
 
-BROCCOLI_MAX_STACK = 30
-ROW_CAPACITY = 10
-BROCCOLI_INSERT_OFFSET_RATIO = 0.33
-WATER_SPEED_GAIN = 1
+# 플레이어(병사) 부대 설정
+BROCCOLI_MAX_STACK = 30          # 브로콜리를 먹고 늘어날 수 있는 최대 병사 수
+ROW_CAPACITY = 10                # 한 줄에 배치되는 최대 병사 수 (10명이 넘으면 윗줄로 쌓임)
+BROCCOLI_INSERT_OFFSET_RATIO = 0.33 # 병사가 추가될 때 옆으로 겹쳐서 서는 간격 비율
+WATER_SPEED_GAIN = 1             # 물을 먹었을 때 증가하는 플레이어 이동 속도
 
-# - 보스(초 단위)
-BOSS_FIRST_DELAY = 20
-BOSS_INTERVAL = 15
-BOSS_MAX_SPAWN = 3
-BOSS_WARNING_SEC = 3
+# - 보스 스폰 관련 (초 단위)
+BOSS_FIRST_DELAY = 20            # 게임 시작 후 보스가 최초로 등장하기까지 걸리는 시간
+BOSS_INTERVAL = 15               # 보스 연속 등장 간격 (초)
+BOSS_MAX_SPAWN = 3               # 한 게임당 등장할 수 있는 보스의 최대 횟수
+BOSS_WARNING_SEC = 3             # 보스 등장 전 경고창(Warning)이 화면에 유지되는 시간
 
-# - 네블라이저(필살기)
-NEBULIZER_ALL_ENEMY_HP_DEC = 5
-NEBULIZER_EFFECT_DURATION_MS = 1000
+# - 네블라이저(필살기) 관련 설정
+NEBULIZER_ALL_ENEMY_HP_DEC = 5   # 네블라이저 획득 시 모든 적의 체력을 깎는 수치
+NEBULIZER_EFFECT_DURATION_MS = 1000 # 네블라이저 화면 플래시 이펙트 유지 시간 (밀리초)
 
-POPUP_LIFETIME_MS = 1000
-POPUP_RISE_PER_MS = 0.06
-POPUP_ALPHA_DEC_PER_MS = 0.28
-
-# =====================================================
-# PATH
-# =====================================================
-IMG_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\image\\"
-SOUND_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\sound\\"
-FONT_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\font\\"
+# - 데미지 팝업 관련 설정
+POPUP_LIFETIME_MS = 1000         # 데미지 숫자 팝업이 화면에 유지되는 시간 (밀리초)
+POPUP_RISE_PER_MS = 0.06         # 데미지 숫자가 위로 올라가는 속도
+POPUP_ALPHA_DEC_PER_MS = 0.28    # 데미지 숫자가 서서히 투명해지는 속도
 
 # =====================================================
-# INIT / DISPLAY
+# PATH (파일 경로 설정)
 # =====================================================
-pygame.init()
-pygame.mixer.init()
-
-background = pygame.Surface((BASE_WIDTH, BASE_HEIGHT))
-
-info = pygame.display.Info()
-monitor_w = info.current_w
-monitor_h = info.current_h
-
-# - 화면 스케일(모니터 대응)
-scale_ratio = min(monitor_w / BASE_WIDTH, monitor_h / BASE_HEIGHT) * 0.8
-display_w = int(BASE_WIDTH * scale_ratio)
-display_h = int(BASE_HEIGHT * scale_ratio)
-
-screen = pygame.display.set_mode((display_w, display_h))
-pygame.display.set_caption("강철폐포부대")
-clock = pygame.time.Clock()
+IMG_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\image\\"    # 이미지 파일 폴더 경로
+SOUND_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\sound\\"  # 사운드 파일 폴더 경로
+FONT_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\font\\"    # 폰트 파일 폴더 경로
 
 # =====================================================
-# STATE (화면 전환)
+# 2. INIT / DISPLAY (Pygame 초기화 및 화면 크기 설정)
 # =====================================================
-STATE_TITLE = 0
-STATE_INTRO = 1
-STATE_READY = 2
-STATE_GAME = 3
-game_state = STATE_TITLE
+pygame.init()   # Pygame 핵심 모듈 초기화
+pygame.mixer.init() # Pygame 오디오(사운드) 모듈 초기화
 
-# =====================================================
-# LOAD / UI (시작/결과 화면)
-# =====================================================
-# - 시작 화면
-image_game_start_bg = pygame.image.load(IMG_PATH + "game_start.png")
-image_game_start_bg = pygame.transform.scale(image_game_start_bg, (BASE_WIDTH, BASE_HEIGHT))
+info = pygame.display.Info() # 현재 사용자의 모니터 해상도 정보를 가져옴
+# 모니터 크기에 맞춰 게임 화면이 벗어나지 않도록 스케일 비율 계산 (80% 크기)
+scale_ratio = min(info.current_w / BASE_WIDTH, info.current_h / BASE_HEIGHT) * 0.8
+display_w, display_h = int(BASE_WIDTH * scale_ratio), int(BASE_HEIGHT * scale_ratio)
 
-image_game_name = pygame.image.load(IMG_PATH + "game_name.png")
-image_game_name = pygame.transform.rotozoom(image_game_name, 0, 0.85)
+screen = pygame.display.set_mode((display_w, display_h)) # 실제 모니터에 표시될 창 생성
+background = pygame.Surface((BASE_WIDTH, BASE_HEIGHT))   # 내부적으로 그려질 원본 크기의 도화지(서피스)
+pygame.display.set_caption("강철폐포부대")               # 창 상단에 표시될 게임 제목
+clock = pygame.time.Clock()                              # FPS 및 시간 계산을 위한 시계 객체
 
-image_start_button = pygame.image.load(IMG_PATH + "start_button.png")
-image_start_button = pygame.transform.rotozoom(image_start_button, 0, 0.35)
-
-start_button_rect_img = image_start_button.get_rect(
-    center=(BASE_WIDTH // 2, int(BASE_HEIGHT * TITLE_STARTBTN_Y_RATIO))
-)
-
-game_name_rect = image_game_name.get_rect(
-    center=(BASE_WIDTH // 2, int(BASE_HEIGHT * TITLE_NAME_Y_RATIO)+50)
-)
-
-image_ready_start_button = pygame.image.load(IMG_PATH + "버튼_START.png")
-image_ready_start_button = pygame.transform.rotozoom(image_ready_start_button, 0, 0.8)
-ready_start_rect_img = image_ready_start_button.get_rect(
-    center=(BASE_WIDTH / 2, BASE_HEIGHT / 2 + 300) 
-)
-
-# - 결과 화면
-image_success_bg = pygame.image.load(IMG_PATH + "success.png")
-image_success_bg = pygame.transform.scale(image_success_bg, (BASE_WIDTH, BASE_HEIGHT))
-
-image_fail_bg = pygame.image.load(IMG_PATH + "fail.png")
-image_fail_bg = pygame.transform.scale(image_fail_bg, (BASE_WIDTH, BASE_HEIGHT))
-
-try:
-    image_gameover_title = pygame.image.load(IMG_PATH + "button_fail.png")
-    image_gameover_title = pygame.transform.rotozoom(image_gameover_title, 0, 0.8)
-except:
-    image_gameover_title = None
-
-try:
-    image_success_title = pygame.image.load(IMG_PATH + "button_success.png") 
-    image_success_title = pygame.transform.rotozoom(image_success_title, 0, 0.8)
-except:
-    image_success_title = None
-
-image_retry_button = pygame.image.load(IMG_PATH + "버튼_RETRY.png")
-image_retry_button = pygame.transform.rotozoom(image_retry_button, 0, 0.85) 
-retry_rect_img = image_retry_button.get_rect()
-
-image_quit_button = pygame.image.load(IMG_PATH + "버튼_QUIT.png")
-image_quit_button = pygame.transform.rotozoom(image_quit_button, 0, 0.85)
-quit_rect_img = image_quit_button.get_rect()
-
-try:
-    image_boss_warning = pygame.image.load(IMG_PATH + "warn_boss.png")
-    image_boss_warning = pygame.transform.rotozoom(image_boss_warning, 0, 0.7) 
-except:
-    image_boss_warning = None
-
-# [수정됨: 2. 스케일 변수(NEBULIZER_EFFECT_SCALE)를 적용하여 이미지 로드]
-try:
-    image_nebulizer_effect = pygame.image.load(IMG_PATH + "effect_네불라이저.png")
-    image_nebulizer_effect = pygame.transform.rotozoom(image_nebulizer_effect, 0, NEBULIZER_EFFECT_SCALE) 
-except:
-    image_nebulizer_effect = None
+# 게임 상태를 나타내는 고유 번호 (0: 타이틀, 1: 스토리 인트로, 2: 레디 화면, 3: 본 게임)
+STATE_TITLE, STATE_INTRO, STATE_READY, STATE_GAME = 0, 1, 2, 3
+game_state = STATE_TITLE # 현재 게임 상태를 타이틀 화면으로 초기화
 
 # =====================================================
-# LOAD / GAME (배경 + 오브젝트 + UI 아이콘)
+# 3. LOAD & SCALE (이미지, 효과음, 폰트 로드 및 크기 조절)
 # =====================================================
-# - 게임 배경
-image_bg = pygame.image.load(IMG_PATH + "background_highR.png")
-image_bg = pygame.transform.scale(image_bg, (BASE_WIDTH, BASE_HEIGHT))
+def load_img(path, scale=1.0):
+    """이미지를 불러와 지정된 비율로 스케일링하는 헬퍼 함수 (에러 방지 기능 포함)"""
+    try:
+        img = pygame.image.load(path) # 경로에서 이미지를 메모리에 로드
+        if scale != 1.0: 
+            img = pygame.transform.rotozoom(img, 0, scale) # scale 값에 따라 이미지 크기 축소/확대
+        return img
+    except: 
+        # 파일이 없을 경우 게임이 튕기지 않도록 검은색의 작은 더미 사각형 반환
+        return pygame.Surface((50, 50)) 
 
-image_icon_star = pygame.image.load(IMG_PATH + "star.png")
-image_icon_clock = pygame.image.load(IMG_PATH + "time.png")
-image_icon_spo2 = pygame.image.load(IMG_PATH + "o2.png")
+# 각종 UI 및 배경 이미지 로드 및 크기/위치(Rect) 지정
+img_start_bg = pygame.transform.scale(load_img(IMG_PATH+"game_start.png"), (BASE_WIDTH, BASE_HEIGHT))
+img_name = load_img(IMG_PATH+"game_name.png", 0.85)
+img_btn_start = load_img(IMG_PATH+"start_button.png", 0.35)
+rect_btn_start = img_btn_start.get_rect(center=(BASE_WIDTH//2, int(BASE_HEIGHT*TITLE_STARTBTN_Y_RATIO)))
+rect_name = img_name.get_rect(center=(BASE_WIDTH//2, int(BASE_HEIGHT*TITLE_NAME_Y_RATIO)+50))
 
-image_icon_star = pygame.transform.scale(image_icon_star, (ICON_SIZE, ICON_SIZE))
-image_icon_clock = pygame.transform.scale(image_icon_clock, (ICON_SIZE, ICON_SIZE))
-image_icon_spo2 = pygame.transform.scale(image_icon_spo2, (ICON_SIZE, ICON_SIZE))
+img_ready_start = load_img(IMG_PATH+"버튼_START.png", 0.8)
+rect_ready_start = img_ready_start.get_rect(center=(BASE_WIDTH/2, BASE_HEIGHT/2+300))
 
-# 폐포(플레이어), 총알
-image_alveolus = pygame.image.load(IMG_PATH + "alveolus.png")
-image_bullet = pygame.image.load(IMG_PATH + "bullet.png")
+# 결과 화면(성공/실패) 배경 및 텍스트 이미지 로드
+img_succ_bg = pygame.transform.scale(load_img(IMG_PATH+"success.png"), (BASE_WIDTH, BASE_HEIGHT))
+img_fail_bg = pygame.transform.scale(load_img(IMG_PATH+"fail.png"), (BASE_WIDTH, BASE_HEIGHT))
+img_title_gameover = load_img(IMG_PATH+"button_fail.png", 0.8)
+img_title_succ = load_img(IMG_PATH+"button_success.png", 0.8)
 
-# 적군
-image_dust = pygame.image.load(IMG_PATH + "dust.png")
-image_food = pygame.image.load(IMG_PATH + "food.png")
-image_cigarette = pygame.image.load(IMG_PATH + "cigarette.png")
+# 다시하기 및 종료 버튼 이미지 로드
+img_btn_retry = load_img(IMG_PATH+"버튼_RETRY.png", 0.85)
+rect_btn_retry = img_btn_retry.get_rect()
+img_btn_quit = load_img(IMG_PATH+"버튼_QUIT.png", 0.85)
+rect_btn_quit = img_btn_quit.get_rect()
 
-image_boss_list = [
-    pygame.image.load(IMG_PATH + "boss1.png"),
-    pygame.image.load(IMG_PATH + "boss2.png"),
-    pygame.image.load(IMG_PATH + "boss3.png")
-]
+# 특수 이펙트 이미지 로드
+img_warn_boss = load_img(IMG_PATH+"warn_boss.png", 0.7)
+img_neb_effect = load_img(IMG_PATH+"effect_네불라이저.png", NEBULIZER_EFFECT_SCALE)
 
-# 아이템
-image_broccoli = pygame.image.load(IMG_PATH + "broccoli.png")
-image_water = pygame.image.load(IMG_PATH + "water.png")
+# 인게임 배경 및 상단 아이콘 로드
+img_bg = pygame.transform.scale(load_img(IMG_PATH+"background_highR.png"), (BASE_WIDTH, BASE_HEIGHT))
+img_icon_star = pygame.transform.scale(load_img(IMG_PATH+"star.png"), (ICON_SIZE, ICON_SIZE))
+img_icon_time = pygame.transform.scale(load_img(IMG_PATH+"time.png"), (ICON_SIZE, ICON_SIZE))
+img_icon_spo2 = pygame.transform.scale(load_img(IMG_PATH+"o2.png"), (ICON_SIZE, ICON_SIZE))
 
-# 필살기
-image_nebulizer = pygame.image.load(IMG_PATH + "nebulizer.png")
+# 인게임 플레이어, 적, 아이템 이미지 로드 및 배율(SCALE) 적용
+img_player = load_img(IMG_PATH+"alveolus.png", SCALE_ALVEOLUS)
+img_bullet = load_img(IMG_PATH+"bullet.png", SCALE_BULLET)
+img_dust = load_img(IMG_PATH+"dust.png", SCALE_DUST)
+img_food = load_img(IMG_PATH+"food.png", SCALE_FOOD)
+img_cig = load_img(IMG_PATH+"cigarette.png", SCALE_CIGARETTE)
+img_bosses = [load_img(IMG_PATH+f"boss{i}.png", SCALE_BOSS) for i in (1,2,3)] # 보스 1, 2, 3 연속 로드
+img_broc = load_img(IMG_PATH+"broccoli.png", SCALE_BROCCOLI)
+img_water = load_img(IMG_PATH+"water.png", SCALE_WATER)
+img_neb = load_img(IMG_PATH+"nebulizer.png", NEBULIZER_SCALE)
 
-# =====================================================
-# SCALE (오브젝트 크기 조절)
-# =====================================================
-image_alveolus = pygame.transform.rotozoom(image_alveolus, 0, SCALE_ALVEOLUS)
-image_bullet = pygame.transform.rotozoom(image_bullet, 0, SCALE_BULLET)
+# 네블라이저 아이템 이미지가 화면 절반을 넘어갈 경우 강제로 축소 처리
+if img_neb.get_width() > BASE_WIDTH//2 - 20: 
+    img_neb = pygame.transform.rotozoom(img_neb, 0, (BASE_WIDTH//2-20)/img_neb.get_width())
 
-image_dust = pygame.transform.rotozoom(image_dust, 0, SCALE_DUST)
-image_food = pygame.transform.rotozoom(image_food, 0, SCALE_FOOD)
-image_cigarette = pygame.transform.rotozoom(image_cigarette, 0, SCALE_CIGARETTE)
-for i in range(len(image_boss_list)):
-    image_boss_list[i] = pygame.transform.rotozoom(image_boss_list[i], 0, SCALE_BOSS)
+# 로드된 이미지들의 너비(w)와 높이(h)를 변수에 저장하여 충돌 계산 등에 활용
+w_p, h_p = img_player.get_size()
+w_b, h_b = img_bullet.get_size()
+w_d, h_d = img_dust.get_size()
+w_f, h_f = img_food.get_size()
+w_c, h_c = img_cig.get_size()
+w_boss, h_boss = img_bosses[0].get_size()
+w_broc, h_broc = img_broc.get_size()
+w_w, h_w = img_water.get_size()
+w_n, h_n = img_neb.get_size()
 
-image_broccoli = pygame.transform.rotozoom(image_broccoli, 0, SCALE_BROCCOLI)
-image_water = pygame.transform.rotozoom(image_water, 0, SCALE_WATER)
+# 스토리 인트로 이미지 1~7번 일괄 로드
+intro_imgs = [pygame.transform.scale(load_img(IMG_PATH+f"story{i}.png"), (BASE_WIDTH, BASE_HEIGHT)) for i in range(1,8)]
 
-image_nebulizer = pygame.transform.rotozoom(image_nebulizer, 0, NEBULIZER_SCALE)
+# 오디오(BGM 및 효과음) 로드 및 예외 처리 (파일 누락 시 에러 방지)
+try: sfx_item = pygame.mixer.Sound(SOUND_PATH+"아이템획득.mp3")
+except: sfx_item = None
+try: sfx_start = pygame.mixer.Sound(SOUND_PATH+"게임시작.mp3")
+except: sfx_start = None
+try: sfx_fail = pygame.mixer.Sound(SOUND_PATH+"게임실패2.mp3"); sfx_succ = pygame.mixer.Sound(SOUND_PATH+"게임성공2.mp3")
+except: sfx_fail = sfx_succ = None
+try: sfx_shoot = pygame.mixer.Sound(SOUND_PATH+"발사소리.mp3"); sfx_shoot.set_volume(0.5) # 총소리 볼륨 50%
+except: sfx_shoot = None
+try: sfx_btn = pygame.mixer.Sound(SOUND_PATH+"버튼클릭음.mp3"); sfx_boss_warn = pygame.mixer.Sound(SOUND_PATH+"경고음.mp3")
+except: sfx_btn = sfx_boss_warn = None
+try: sfx_neb = pygame.mixer.Sound(SOUND_PATH+"네볼라이저효과음.mp3"); sfx_die = pygame.mixer.Sound(SOUND_PATH+"sound_hit.mp3")
+except: sfx_neb = sfx_die = None
 
-RIGHT_ZONE_W = BASE_WIDTH // 2
-MAX_NEB_W = RIGHT_ZONE_W - 20
-neb_w, neb_h = image_nebulizer.get_rect().size
-if neb_w > MAX_NEB_W:
-    extra_scale = MAX_NEB_W / neb_w
-    image_nebulizer = pygame.transform.rotozoom(image_nebulizer, 0, extra_scale)
-
-# =====================================================
-# SIZE CACHE (충돌/배치 계산용)
-# =====================================================
-size_alveolus_width, size_alveolus_height = image_alveolus.get_rect().size
-size_bullet_width, size_bullet_height = image_bullet.get_rect().size
-size_dust_width, size_dust_height = image_dust.get_rect().size
-size_food_width, size_food_height = image_food.get_rect().size
-size_cigarette_width, size_cigarette_height = image_cigarette.get_rect().size
-size_boss_width, size_boss_height = image_boss_list[0].get_rect().size
-size_broccoli_width, size_broccoli_height = image_broccoli.get_rect().size
-size_water_width, size_water_height = image_water.get_rect().size
-size_nebulizer_width, size_nebulizer_height = image_nebulizer.get_rect().size
-
-# =====================================================
-# LOAD / INTRO (story1~7)
-# =====================================================
-intro_images = []
-for i in range(1, 8):
-    img = pygame.image.load(IMG_PATH + f"story{i}.png")
-    img = pygame.transform.scale(img, (BASE_WIDTH, BASE_HEIGHT))
-    intro_images.append(img)
-
-# =====================================================
-# AUDIO (BGM/SFX)
-# =====================================================
-music_intro_file = SOUND_PATH + "배경음1.mp3"
-music_game_file = SOUND_PATH + "배경음2.mp3"
-
-sfx_item = pygame.mixer.Sound(SOUND_PATH + "아이템획득.mp3")
-sfx_start = pygame.mixer.Sound(SOUND_PATH + "게임시작.mp3")
-sfx_fail = pygame.mixer.Sound(SOUND_PATH + "게임실패2.mp3")
-sfx_success = pygame.mixer.Sound(SOUND_PATH + "게임성공2.mp3")
-sfx_shoot = pygame.mixer.Sound(SOUND_PATH + "발사소리.mp3")
-sfx_button = pygame.mixer.Sound(SOUND_PATH + "버튼클릭음.mp3")
-sfx_boss = pygame.mixer.Sound(SOUND_PATH + "경고음.mp3")
-sfx_nebulizer = pygame.mixer.Sound(SOUND_PATH + "네볼라이저효과음.mp3")
-
-try:
-    sfx_player_die = pygame.mixer.Sound(SOUND_PATH + "sound_hit.mp3")
-except:
-    sfx_player_die = None 
-
-sfx_shoot.set_volume(0.5)
-
-pygame.mixer.music.load(music_intro_file)
+# 배경음악 로드 및 무한 반복(-1) 재생
+pygame.mixer.music.load(SOUND_PATH+"배경음1.mp3")
 pygame.mixer.music.play(-1)
 
-# =====================================================
-# FONT
-# =====================================================
-my_custom_font_file = "Bazzi.ttf" 
-font_full_path = os.path.join(FONT_PATH, my_custom_font_file)
-
+# 폰트 파일 로드 (ttf 파일이 없을 경우 시스템 기본 폰트인 arial 사용)
 try:
-    font_small = pygame.font.Font(font_full_path, 28)
-    font_big = pygame.font.Font(font_full_path, 50)
-    font_ui = pygame.font.Font(font_full_path, 34)
+    font_sm = pygame.font.Font(os.path.join(FONT_PATH, "Bazzi.ttf"), 28)
+    font_bg = pygame.font.Font(os.path.join(FONT_PATH, "Bazzi.ttf"), 50)
+    font_ui = pygame.font.Font(os.path.join(FONT_PATH, "Bazzi.ttf"), 34)
 except:
-    print("커스텀 폰트를 찾을 수 없습니다. 기본 폰트로 실행합니다.")
-    font_small = pygame.font.SysFont("arial", 28, bold=True)
-    font_big = pygame.font.SysFont("arial", 50, bold=True)
-    font_ui = pygame.font.SysFont("arial", 34, bold=True)
-
-font_title = pygame.font.SysFont("impact", 90, bold=True) 
+    font_sm, font_bg, font_ui = [pygame.font.SysFont("arial", s, bold=True) for s in (28, 50, 34)]
+font_title = pygame.font.SysFont("impact", 90, bold=True)
 
 # =====================================================
-# UTIL 
+# 4. UTILS (보조 함수들: 겹침 방지, UI 렌더링)
 # =====================================================
 def get_non_overlap_x(existing_list, width, start_x=0, end_x=None, min_gap=10):
-    if end_x is None:
-        end_x = BASE_WIDTH // 2 - width  
-    
-    if start_x >= end_x:
-        end_x = start_x + 1
-        
-    attempts = 0
-    while attempts < 100:
-        x = random.randrange(start_x, end_x)
-        overlap = any(abs(x - obj[0]) < width + min_gap for obj in existing_list)
-        if not overlap:
-            return x
-        attempts += 1
-    return random.randrange(start_x, end_x)
+    """
+    적이나 아이템 스폰 시 기존 객체들과 겹치지 않는 무작위 X 좌표를 반환합니다.
+    - existing_list: 이미 화면에 있는 오브젝트 리스트
+    - width: 새로 생성할 오브젝트의 너비
+    - start_x, end_x: 생성 가능한 X 좌표 범위
+    - min_gap: 오브젝트 간 최소 여백
+    """
+    if end_x is None: end_x = BASE_WIDTH // 2 - width  # end_x 기본값 처리
+    if start_x >= end_x: end_x = start_x + 1           # 범위 오류 방지
+    for _ in range(100):                               # 최대 100번 시도
+        x = random.randrange(start_x, end_x)           # 범위 내 무작위 좌표 추출
+        # 기존 객체와 x 좌표 차이가 폭+여백보다 작은지(겹치는지) 확인
+        if not any(abs(x - obj[0]) < width + min_gap for obj in existing_list): 
+            return x # 안 겹치면 해당 좌표 반환
+    return random.randrange(start_x, end_x) # 100번 다 실패하면 그냥 무작위 반환
 
-def draw_text_with_outline(surface, text, font, text_color, outline_color, x, y):
-    for dx, dy in [(-2,-2), (-2,2), (2,-2), (2,2), (0,-2), (-2,0), (2,0), (0,2)]:
-        outline = font.render(text, True, outline_color)
-        surface.blit(outline, (x + dx, y + dy))
-    label = font.render(text, True, text_color)
-    surface.blit(label, (x, y))
+def draw_txt(surf, txt, font, c_txt, c_out, x, y):
+    """텍스트의 가독성을 높이기 위해 8방향으로 외곽선 색(c_out)을 먼저 그리고 중앙에 본 글자(c_txt)를 그립니다."""
+    for dx, dy in [(-2,-2),(-2,2),(2,-2),(2,2),(0,-2),(-2,0),(2,0),(0,2)]:
+        surf.blit(font.render(txt, True, c_out), (x+dx, y+dy))
+    surf.blit(font.render(txt, True, c_txt), (x, y))
 
-def draw_capsule_bar(surface, x, y, w, h, ratio, color, bg_color=(40, 40, 40)):
-    ratio = max(0.0, min(1.0, ratio))
-    pygame.draw.rect(surface, bg_color, (x, y, w, h), border_radius=h//2)
-    fill_w = int(w * ratio)
-    if fill_w > 0:
-        pygame.draw.rect(surface, color, (x, y, fill_w, h), border_radius=h//2)
-    pygame.draw.rect(surface, (0, 0, 0), (x, y, w, h), width=2, border_radius=h//2)
+def draw_bar(surf, x, y, w, h, ratio, c_fill, c_bg=(40,40,40)):
+    """끝이 둥근 형태의 게이지 바(SpO2)를 그립니다. ratio는 0~1 사이의 채워짐 비율입니다."""
+    pygame.draw.rect(surf, c_bg, (x, y, w, h), border_radius=h//2) # 배경 바 그리기
+    if (fw := int(w * max(0.0, min(1.0, ratio)))) > 0:             # 남은 비율만큼 너비 계산
+        pygame.draw.rect(surf, c_fill, (x, y, fw, h), border_radius=h//2) # 채워진 바 그리기
+    pygame.draw.rect(surf, (0,0,0), (x, y, w, h), width=2, border_radius=h//2) # 검은색 테두리
 
-def draw_mini_hp_bar(surface, x, y, current_hp, max_hp, is_boss=False):
-    if current_hp <= 0: return
-    ratio = current_hp / max_hp
-    bar_w = BOSS_HP_BAR_W if is_boss else MINI_HP_BAR_W
-    bar_h = BOSS_HP_BAR_H if is_boss else MINI_HP_BAR_H
-
-    pygame.draw.rect(surface, (80, 0, 0), (x, y, bar_w, bar_h))
-    pygame.draw.rect(surface, (255, 50, 50), (x, y, int(bar_w * ratio), bar_h))
-    pygame.draw.rect(surface, (0, 0, 0), (x, y, bar_w, bar_h), width=1)
-
+def draw_hp(surf, x, y, hp, m_hp, is_boss=False):
+    """적의 머리 위에 표시되는 작은 직사각형 형태의 체력바를 그립니다."""
+    if hp <= 0: return # 체력이 0 이하면 그리지 않음
+    w, h = (BOSS_HP_BAR_W, BOSS_HP_BAR_H) if is_boss else (MINI_HP_BAR_W, MINI_HP_BAR_H)
+    pygame.draw.rect(surf, (80,0,0), (x, y, w, h)) # 체력바 붉은 배경
+    pygame.draw.rect(surf, (255,50,50), (x, y, int(w * (hp/m_hp)), h)) # 현재 체력 비율만큼 밝은 붉은색 채우기
+    pygame.draw.rect(surf, (0,0,0), (x, y, w, h), width=1) # 얇은 검은색 테두리
 
 # =====================================================
-# GAME RESET
+# 5. GAME RESET (게임 초기화)
 # =====================================================
 def reset_game():
-    global players, bullets, to_x, move_speed, SpO2
+    """게임 재시작 시 관련된 모든 데이터(위치, 스폰 시간, 체력 등)를 초기 상태로 되돌립니다."""
+    global p_list, b_list, to_x, m_spd, spo2
+    global e_list, boss_data, itm_list, f_txts, neb_data, dmg_pops
+    global is_over, is_succ, score, t_start, sec, t_spawn, snd_end
 
-    global dusts, cigarettes, foods
-    global boss_hp, boss_alive, x_pos_boss, y_pos_boss, boss_warning, boss_warning_start
-    global last_boss_spawn, remaining_boss_images, boss_spawn_count, current_boss_image
+    # 플레이어(폐포 병사) 초기 리스트 세팅. 화면 하단 중앙 위치 지정
+    p_list = [[BASE_WIDTH/2 - w_p/2, BASE_HEIGHT - h_p - 20]] 
+    to_x, m_spd, spo2 = 0, PLAYER_BASE_SPEED, SPO2_START # 이동 변수, 이동 속도, 초기 산소포화도
+    b_list = [] # 발사된 총알들을 담는 리스트 [x, y]
 
-    global broccolis, waters
-    global floating_texts
+    # 적 리스트: 먼지, 음식, 담배를 딕셔너리로 분류하여 관리 (내부 요소: [x, y, hp])
+    e_list = {'dust':[], 'food':[], 'cig':[]} 
+    
+    # 보스 관련 통합 데이터 딕셔너리
+    boss_data = {'hp':BOSS_HP, 'alive':False, 'x':0, 'y':0, 'warn':False, 't_warn':0, 't_last':0, 'imgs':img_bosses.copy(), 'cnt':0, 'cur':img_bosses[0]}
+    
+    # 아이템 및 UI 이펙트 관련 리스트
+    itm_list = {'broc':[], 'water':[]} # 브로콜리와 물방울 좌표
+    f_txts, dmg_pops = [], []          # 떠오르는 텍스트, 네블라이저 발동 시 데미지 팝업
+    neb_data = {'list':[], 'times':set(), 'on':False, 't_on':0} # 네블라이저 아이템 추적 및 화면 이펙트 지속시간 관리
 
-    global nebulizers, nebulizer_spawned_times
-    global nebulizer_effect, nebulizer_effect_start, damage_popups
+    # 게임 진행 및 결과 플래그
+    is_over, is_succ, score = False, False, 0
+    t_start, sec = pygame.time.get_ticks(), 0 # 게임 시작 시간 기록
+    
+    # 스폰 타이머 관리용 딕셔너리 (초기 시작 시간을 음수로 주어 특정 시간 이후에 스폰되도록 유도)
+    t_spawn = {'dust':-1, 'food':-3, 'cig':-6, 'broc':-5, 'water':-7}
+    snd_end = False # 종료음(성공/실패) 중복 재생 방지 플래그
 
-    global game_over, success, point
-    global start_ticks, seconds
-    global last_spawn_second, last_spawn_food, last_spawn_cigarette
-    global last_spawn_broccoli, last_spawn_water
-    global end_sound_played
-
-    players = [[BASE_WIDTH / 2 - size_alveolus_width / 2, BASE_HEIGHT - size_alveolus_height - 20]]
-    to_x = 0
-    move_speed = PLAYER_BASE_SPEED
-    SpO2 = SPO2_START
-
-    bullets = []
-    dusts = []
-    foods = []
-    cigarettes = []
-    broccolis = []
-    waters = []
-    floating_texts = []
-
-    nebulizers = []
-    nebulizer_spawned_times = set()
-    nebulizer_effect = False
-    nebulizer_effect_start = 0
-    damage_popups = []
-
-    boss_hp = BOSS_HP
-    boss_alive = False
-    x_pos_boss = 0
-    y_pos_boss = 0
-    boss_warning = False
-    boss_warning_start = 0
-    last_boss_spawn = 0
-    remaining_boss_images = image_boss_list.copy()
-    boss_spawn_count = 0
-    current_boss_image = image_boss_list[0]
-
-    point = 0
-    game_over = False
-    success = False
-
-    start_ticks = pygame.time.get_ticks()
-    seconds = 0
-
-    last_spawn_second = -1
-    last_spawn_food = -3
-    last_spawn_cigarette = -6
-    last_spawn_broccoli = -5
-    last_spawn_water = -7
-
-    end_sound_played = False
-
-reset_game()
+reset_game() # 프로그램 실행 시 최초 한 번 초기화 진행
 
 # =====================================================
-# INTRO
+# 6. MAIN LOOP (게임 메인 실행부)
 # =====================================================
-intro_index = 0
-
-# =====================================================
-# MAIN LOOP
-# =====================================================
-game_started = False
-play = True
+play, is_run, intro_idx = True, False, 0
 
 while play:
-    clock.tick(FPS)
-    shake_x = 0
-    shake_y = 0
+    clock.tick(FPS)      # 설정된 FPS 값에 맞게 루프 속도 제어
+    sh_x, sh_y = 0, 0    # 화면 흔들림(shake) 변수 매 프레임 초기화
 
-    if game_state == STATE_TITLE:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                play = False
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                mx, my = pygame.mouse.get_pos()
-                mx /= scale_ratio
-                my /= scale_ratio
-                if start_button_rect_img.collidepoint(mx, my):
-                    sfx_button.play()
-                    intro_index = 0
-                    game_state = STATE_INTRO
-
-        background.blit(image_game_start_bg, (0, 0))
-        background.blit(image_game_name, game_name_rect)
-        background.blit(image_start_button, start_button_rect_img)
-
-    elif game_state == STATE_INTRO:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                play = False
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                sfx_button.play() 
-                intro_index += 1
-                if intro_index >= len(intro_images):
-                    game_state = STATE_READY
-
-        if intro_index < len(intro_images):
-            background.blit(intro_images[intro_index], (0, 0))
-
-    elif game_state == STATE_READY:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                play = False
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                mx, my = pygame.mouse.get_pos()
-                mx /= scale_ratio
-                my /= scale_ratio
-                if ready_start_rect_img.collidepoint(mx, my):
-                    sfx_button.play()
-                    sfx_start.play()
-                    game_started = True
-                    start_ticks = pygame.time.get_ticks()
-                    pygame.mixer.music.stop()
-                    pygame.mixer.music.load(music_game_file)
-                    pygame.mixer.music.play(-1)
-                    game_state = STATE_GAME
-
-        background.blit(image_game_start_bg, (0, 0))
-        background.blit(image_ready_start_button, ready_start_rect_img)
-
-    elif game_state == STATE_GAME:
-        if game_started and not game_over and not success:
-            seconds = (pygame.time.get_ticks() - start_ticks) / 1000
-        time_left = max(0, int(TIME_LIMIT - seconds))
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                play = False
-            if (game_over or success) and event.type == pygame.MOUSEBUTTONDOWN:
-                mx, my = pygame.mouse.get_pos()
-                mx /= scale_ratio
-                my /= scale_ratio
-                if retry_rect_img.collidepoint(mx, my):
-                    sfx_button.play()
-                    reset_game()
-                    game_started = True
-                    start_ticks = pygame.time.get_ticks()
-                    pygame.mixer.music.load(music_game_file)
-                    pygame.mixer.music.play(-1)
-                if quit_rect_img.collidepoint(mx, my):
-                    sfx_button.play()
-                    play = False
-            if game_started and not game_over and not success:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RIGHT:
-                        to_x = move_speed
-                    if event.key == pygame.K_LEFT:
-                        to_x = -move_speed
-                    if event.key == pygame.K_SPACE:
-                        sfx_shoot.play()
-                        for p in players:
-                            bullets.append([p[0] + size_alveolus_width / 2 - size_bullet_width / 2, p[1]])
-                if event.type == pygame.KEYUP:
-                    if event.key in (pygame.K_RIGHT, pygame.K_LEFT):
-                        to_x = 0
-
-        background.blit(image_bg, (0, 0))
-
-        # =================================================
-        # GAME LOGIC
-        # =================================================
-        if game_started and not game_over and not success:
-            SpO2 -= SPO2_DECAY_PER_SEC * (clock.get_time() / 1000)
-            if SpO2 < 0:
-                SpO2 = 0
-            if SpO2 <= 0:
-                game_over = True
-
-            if seconds - last_spawn_second >= DUST_SPAWN_INTERVAL:
-                last_spawn_second = seconds
-                x_dust = get_non_overlap_x(dusts + cigarettes, size_dust_width)
-                dusts.append([x_dust, 0, DUST_HP])
-
-            if seconds >= FOOD_SPAWN_START and int(seconds) - last_spawn_food >= FOOD_SPAWN_INTERVAL:
-                last_spawn_food = int(seconds)
-                x_food = get_non_overlap_x(dusts + cigarettes + foods, size_food_width)
-                foods.append([x_food, 0, FOOD_HP])
-
-            if seconds >= CIGARETTE_SPAWN_START and int(seconds) - last_spawn_cigarette >= CIGARETTE_SPAWN_INTERVAL:
-                last_spawn_cigarette = int(seconds)
-                x_cig = get_non_overlap_x(dusts + cigarettes, size_cigarette_width)
-                cigarettes.append([x_cig, 0, CIGARETTE_HP])
-
-            if (not boss_alive and remaining_boss_images and boss_spawn_count < BOSS_MAX_SPAWN
-                and int(seconds) - last_boss_spawn >= BOSS_INTERVAL and seconds >= BOSS_FIRST_DELAY):
-                sfx_boss.play()
-                boss_alive = True
-                boss_warning = True
-                boss_warning_start = pygame.time.get_ticks()
-                last_boss_spawn = int(seconds)
-                x_pos_boss = random.randrange(0, BASE_WIDTH // 2 - size_boss_width)
-                y_pos_boss = 0
-                current_boss_image = random.choice(remaining_boss_images)
-                remaining_boss_images.remove(current_boss_image)
-                boss_hp = BOSS_HP
-                boss_spawn_count += 1
-
-            if int(seconds) - last_spawn_broccoli >= BROCCOLI_SPAWN_INTERVAL:
-                last_spawn_broccoli = int(seconds)
-                x_bro = get_non_overlap_x(broccolis + waters, size_broccoli_width, start_x=BASE_WIDTH // 2, end_x=BASE_WIDTH - size_broccoli_width, min_gap=40)
-                broccolis.append([x_bro, 0])
-
-            if int(seconds) - last_spawn_water >= WATER_SPAWN_INTERVAL:
-                last_spawn_water = int(seconds)
-                x_water = get_non_overlap_x(broccolis + waters, size_water_width, start_x=BASE_WIDTH // 2, end_x=BASE_WIDTH - size_water_width, min_gap=40)
-                waters.append([x_water, 0])
-
-            for t in NEBULIZER_SPAWN_TIMES:
-                if seconds >= t and t not in nebulizer_spawned_times:
-                    nebulizer_spawned_times.add(t)
-                    min_x = BASE_WIDTH // 2
-                    max_x = BASE_WIDTH - size_nebulizer_width
-                    if max_x <= min_x:
-                        x_neb = min_x
-                    else:
-                        x_neb = random.randrange(min_x, max_x)
-                    nebulizers.append([x_neb, 0])
-
-            for p in players:
-                p[0] += to_x
-
-            if len(players) > 0:
-                min_x = min(p[0] for p in players)
-                if min_x < 0:
-                    diff = -min_x
-                    for p in players:
-                        p[0] += diff
-
-                max_x = max(p[0] for p in players)
-                if max_x > BASE_WIDTH - size_alveolus_width:
-                    diff = max_x - (BASE_WIDTH - size_alveolus_width)
-                    for p in players:
-                        p[0] -= diff
-
-            # -----------------------------
-            # 적군 이동/렌더 및 플레이어-적 충돌 검사
-            # -----------------------------
-            for dust in dusts[:]:
-                dust[1] += DUST_SPEED
-                background.blit(image_dust, (dust[0], dust[1]))
-                draw_mini_hp_bar(background, dust[0] + size_dust_width/2 - MINI_HP_BAR_W/2, dust[1] - 12, dust[2], DUST_HP)
-                
-                dust_rect = pygame.Rect(dust[0], dust[1], size_dust_width, size_dust_height)
-                hit_player = False
-                for p in players[:]:
-                    p_rect = pygame.Rect(p[0], p[1], size_alveolus_width, size_alveolus_height)
-                    if dust_rect.colliderect(p_rect):
-                        players.remove(p)
-                        if sfx_player_die: sfx_player_die.play() 
-                        if dust in dusts: dusts.remove(dust)
-                        hit_player = True
-                        break 
-                
-                if hit_player: 
-                    if len(players) <= 0: game_over = True
-                    continue
-
-                if dust[1] >= BASE_HEIGHT - size_dust_height:
-                    game_over = True
-
-            for food in foods[:]:
-                food[1] += FOOD_SPEED
-                background.blit(image_food, (food[0], food[1]))
-                draw_mini_hp_bar(background, food[0] + size_food_width/2 - MINI_HP_BAR_W/2, food[1] - 12, food[2], FOOD_HP)
-                
-                food_rect = pygame.Rect(food[0], food[1], size_food_width, size_food_height)
-                hit_player = False
-                for p in players[:]:
-                    p_rect = pygame.Rect(p[0], p[1], size_alveolus_width, size_alveolus_height)
-                    if food_rect.colliderect(p_rect):
-                        players.remove(p)
-                        if sfx_player_die: sfx_player_die.play() 
-                        if food in foods: foods.remove(food)
-                        hit_player = True
-                        break
-                if hit_player:
-                    if len(players) <= 0: game_over = True
-                    continue
-
-                if food[1] >= BASE_HEIGHT - size_food_height:
-                    game_over = True
-
-            for cigarette in cigarettes[:]:
-                cigarette[1] += CIGARETTE_SPEED
-                background.blit(image_cigarette, (cigarette[0], cigarette[1]))
-                draw_mini_hp_bar(background, cigarette[0] + size_cigarette_width/2 - MINI_HP_BAR_W/2, cigarette[1] - 12, cigarette[2], CIGARETTE_HP)
-                
-                cig_rect = pygame.Rect(cigarette[0], cigarette[1], size_cigarette_width, size_cigarette_height)
-                hit_player = False
-                for p in players[:]:
-                    p_rect = pygame.Rect(p[0], p[1], size_alveolus_width, size_alveolus_height)
-                    if cig_rect.colliderect(p_rect):
-                        players.remove(p)
-                        if sfx_player_die: sfx_player_die.play() 
-                        if cigarette in cigarettes: cigarettes.remove(cigarette)
-                        hit_player = True
-                        break
-                if hit_player:
-                    if len(players) <= 0: game_over = True
-                    continue
-
-                if cigarette[1] >= BASE_HEIGHT - size_cigarette_height:
-                    game_over = True
-
-            if boss_alive:
-                y_pos_boss += BOSS_SPEED
-                background.blit(current_boss_image, (x_pos_boss, y_pos_boss))
-                draw_mini_hp_bar(background, x_pos_boss + size_boss_width/2 - BOSS_HP_BAR_W/2, y_pos_boss - 25, boss_hp, BOSS_HP, is_boss=True)
-                
-                boss_rect = pygame.Rect(x_pos_boss, y_pos_boss, size_boss_width, size_boss_height)
-                for p in players[:]:
-                    p_rect = pygame.Rect(p[0], p[1], size_alveolus_width, size_alveolus_height)
-                    if boss_rect.colliderect(p_rect):
-                        players.remove(p)
-                        if sfx_player_die: sfx_player_die.play() 
-                        boss_hp -= 5  
-                        if boss_hp <= 0:
-                            boss_alive = False
-                            point += SCORE_BOSS
-                            SpO2 = min(100, SpO2 + SPO2_GAIN_BOSS)
-                        break 
-                
-                if len(players) <= 0: 
-                    game_over = True
-
-                if y_pos_boss >= BASE_HEIGHT - size_boss_height:
-                    game_over = True
-
-            # -----------------------------
-            # 아이템 렌더 및 충돌 
-            # -----------------------------
-            for bro in broccolis[:]:
-                bro[1] += BROCCOLI_SPEED
-                background.blit(image_broccoli, (bro[0], bro[1]))
-
-                if bro[1] >= BASE_HEIGHT - size_broccoli_height:
-                    broccolis.remove(bro)
-                    continue
-
-                for p in players:
-                    if (p[0] < bro[0] < p[0] + size_alveolus_width and
-                        p[1] < bro[1] + size_broccoli_height < p[1] + size_alveolus_height):
-                        sfx_item.play()
-                        floating_texts.append([p[0], p[1], "Squad +1", (0, 255, 50), pygame.time.get_ticks()])
-                        broccolis.remove(bro)
-                        
-                        if len(players) < BROCCOLI_MAX_STACK:
-                            offset_x = size_alveolus_width * BROCCOLI_INSERT_OFFSET_RATIO
-                            offset_y = size_alveolus_height * 0.6  
-                            
-                            if len(players) % ROW_CAPACITY == 0:
-                                rightmost_x = max(pl[0] for pl in players)
-                                top_y = min(pl[1] for pl in players)
-                                players.insert(0, [rightmost_x, top_y - offset_y])
-                            else:
-                                players.insert(0, [players[0][0] - offset_x, players[0][1]])
-                        break
-
-            for water in waters[:]:
-                water[1] += WATER_SPEED
-                background.blit(image_water, (water[0], water[1]))
-
-                if water[1] >= BASE_HEIGHT - size_water_height:
-                    waters.remove(water)
-                    continue
-
-                for p in players:
-                    if (p[0] < water[0] < p[0] + size_alveolus_width and
-                        p[1] < water[1] + size_water_height < p[1] + size_alveolus_height):
-                        sfx_item.play()
-                        floating_texts.append([p[0], p[1], "Speed UP!", (0, 200, 255), pygame.time.get_ticks()])
-                        waters.remove(water)
-                        move_speed += WATER_SPEED_GAIN
-                        break
-
-            for neb in nebulizers[:]:
-                neb[1] += NEBULIZER_SPEED
-                background.blit(image_nebulizer, (neb[0], neb[1]))
-
-                if neb[1] >= BASE_HEIGHT - size_nebulizer_height:
-                    nebulizers.remove(neb)
-                    continue
-
-                neb_collected = False
-                neb_rect = pygame.Rect(neb[0], neb[1], size_nebulizer_width, size_nebulizer_height)
-
-                for p in players:
-                    player_rect = pygame.Rect(p[0], p[1], size_alveolus_width, size_alveolus_height)
-                    if neb_rect.colliderect(player_rect):
-                        neb_collected = True
-                        break
-
-                if neb_collected:
-                    sfx_nebulizer.play()
-                    
-                    floating_texts.append([players[0][0], players[0][1], "DAMAGE ALL -5", (0, 220, 255), pygame.time.get_ticks()])
-                    
-                    nebulizers.remove(neb)
-                    nebulizer_effect = True
-                    nebulizer_effect_start = pygame.time.get_ticks()
-
-                    for dust in dusts[:]:
-                        dust[2] -= NEBULIZER_ALL_ENEMY_HP_DEC
-                        damage_popups.append((dust[0] + size_dust_width // 2, dust[1], pygame.time.get_ticks()))
-                        if dust[2] <= 0:
-                            dusts.remove(dust)
-                            point += SCORE_DUST
-                            SpO2 = min(100, SpO2 + SPO2_GAIN_DUST)
-
-                    for food in foods[:]:
-                        food[2] -= NEBULIZER_ALL_ENEMY_HP_DEC
-                        damage_popups.append((food[0] + size_food_width // 2, food[1], pygame.time.get_ticks()))
-                        if food[2] <= 0:
-                            foods.remove(food)
-                            point += SCORE_FOOD
-                            SpO2 = min(100, SpO2 + SPO2_GAIN_FOOD)
-
-                    for cigarette in cigarettes[:]:
-                        cigarette[2] -= NEBULIZER_ALL_ENEMY_HP_DEC
-                        damage_popups.append((cigarette[0] + size_cigarette_width // 2, cigarette[1], pygame.time.get_ticks()))
-                        if cigarette[2] <= 0:
-                            cigarettes.remove(cigarette)
-                            point += SCORE_CIGARETTE
-                            SpO2 = min(100, SpO2 + SPO2_GAIN_CIGARETTE)
-
-                    if boss_alive:
-                        boss_hp -= NEBULIZER_ALL_ENEMY_HP_DEC
-                        damage_popups.append((x_pos_boss + size_boss_width // 2, y_pos_boss, pygame.time.get_ticks()))
-                        if boss_hp <= 0:
-                            boss_alive = False
-                            point += SCORE_BOSS
-                            SpO2 = min(100, SpO2 + SPO2_GAIN_BOSS)
-                    break
-
-            for bullet in bullets[:]:
-                bullet[1] -= BULLET_SPEED
-                background.blit(image_bullet, (bullet[0], bullet[1]))
-
-                if bullet[1] <= 0:
-                    if bullet in bullets: bullets.remove(bullet)
-                    continue
-
-                hit = False
-                for dust in dusts[:]:
-                    if (dust[0] < bullet[0] < dust[0] + size_dust_width and dust[1] < bullet[1] < dust[1] + size_dust_height):
-                        dust[2] -= 1
-                        if bullet in bullets: bullets.remove(bullet)
-                        hit = True
-                        if dust[2] <= 0:
-                            dusts.remove(dust)
-                            point += SCORE_DUST
-                            SpO2 = min(100, SpO2 + SPO2_GAIN_DUST)
-                        break
-                if hit: continue
-
-                for food in foods[:]:
-                    if (food[0] < bullet[0] < food[0] + size_food_width and food[1] < bullet[1] < food[1] + size_food_height):
-                        food[2] -= 1
-                        if bullet in bullets: bullets.remove(bullet)
-                        hit = True
-                        if food[2] <= 0:
-                            foods.remove(food)
-                            point += SCORE_FOOD
-                            SpO2 = min(100, SpO2 + SPO2_GAIN_FOOD)
-                        break
-                if hit: continue
-
-                for cigarette in cigarettes[:]:
-                    if (cigarette[0] < bullet[0] < cigarette[0] + size_cigarette_width and cigarette[1] < bullet[1] < cigarette[1] + size_cigarette_height):
-                        cigarette[2] -= 1
-                        if bullet in bullets: bullets.remove(bullet)
-                        hit = True
-                        if cigarette[2] <= 0:
-                            cigarettes.remove(cigarette)
-                            point += SCORE_CIGARETTE
-                            SpO2 = min(100, SpO2 + SPO2_GAIN_CIGARETTE)
-                        break
-                if hit: continue
-
-                if boss_alive:
-                    if (x_pos_boss < bullet[0] < x_pos_boss + size_boss_width and y_pos_boss < bullet[1] < y_pos_boss + size_boss_height):
-                        boss_hp -= 1
-                        if bullet in bullets: bullets.remove(bullet)
-                        if boss_hp <= 0:
-                            boss_alive = False
-                            point += SCORE_BOSS
-                            SpO2 = min(100, SpO2 + SPO2_GAIN_BOSS)
-
-            if seconds >= TIME_LIMIT:
-                if SpO2 >= SPO2_WIN_THRESHOLD:
-                    success = True
-                else:
-                    game_over = True
-
-        # =================================================
-        # DRAW: 플레이어 / HUD
-        # =================================================
+    # 키보드 및 마우스 이벤트 감지
+    for ev in pygame.event.get():
+        if ev.type == pygame.QUIT: play = False # 창의 X 버튼을 누르면 루프 종료
         
-        for p in sorted(players, key=lambda val: val[1]):
-            background.blit(image_alveolus, (p[0], p[1]))
+        # [타이틀 화면] 시작 버튼 클릭 감지
+        if game_state == STATE_TITLE and ev.type == pygame.MOUSEBUTTONDOWN:
+            mx, my = ev.pos[0]/scale_ratio, ev.pos[1]/scale_ratio # 모니터 배율에 맞게 클릭 좌표 보정
+            if rect_btn_start.collidepoint(mx, my): # 마우스 위치가 버튼 사각형 영역 안에 있는지 확인
+                if sfx_btn: sfx_btn.play()
+                intro_idx, game_state = 0, STATE_INTRO # 스토리 인트로 화면으로 상태 전환
 
-        icon_x_point = 20
-        icon_y_point = 20
-        background.blit(image_icon_star, (icon_x_point, icon_y_point))
-        draw_text_with_outline(background, f"{point}", font_ui, (255, 215, 0), (80, 50, 0), icon_x_point + ICON_SIZE + 10, icon_y_point)
+        # [스토리 인트로 화면] 스페이스바 입력 감지
+        elif game_state == STATE_INTRO and ev.type == pygame.KEYDOWN and ev.key == pygame.K_SPACE:
+            if sfx_btn: sfx_btn.play()
+            intro_idx += 1 # 스페이스바 누를 때마다 다음 스토리 이미지로 인덱스 증가
+            if intro_idx >= len(intro_imgs): game_state = STATE_READY # 스토리가 끝나면 준비 화면으로
 
-        icon_x_time = BASE_WIDTH // 2 - 50
-        icon_y_time = 20
-        background.blit(image_icon_clock, (icon_x_time, icon_y_time))
-        draw_text_with_outline(background, f"{time_left}", font_ui, (255, 255, 255), (50, 50, 50), icon_x_time + ICON_SIZE + 10, icon_y_time)
+        # [준비 화면] 플레이 버튼 클릭 감지
+        elif game_state == STATE_READY and ev.type == pygame.MOUSEBUTTONDOWN:
+            mx, my = ev.pos[0]/scale_ratio, ev.pos[1]/scale_ratio
+            if rect_ready_start.collidepoint(mx, my):
+                if sfx_btn: sfx_btn.play()
+                if sfx_start: sfx_start.play()
+                is_run, t_start = True, pygame.time.get_ticks() # 본격적인 게임 타이머 시작
+                pygame.mixer.music.load(SOUND_PATH+"배경음2.mp3"); pygame.mixer.music.play(-1) # 인게임 브금 변경
+                game_state = STATE_GAME # 게임 상태 전환
 
-        bar_w = 400
-        bar_h = 24
-        bar_x = BASE_WIDTH // 2 - bar_w // 2
-        bar_y = 65
-        ratio = SpO2 / 100.0
+        # [본 게임 및 결과 화면] 입력 감지
+        elif game_state == STATE_GAME:
+            # 게임 종료 상태(성공/실패)일 때 마우스 클릭 처리
+            if (is_over or is_succ) and ev.type == pygame.MOUSEBUTTONDOWN:
+                mx, my = ev.pos[0]/scale_ratio, ev.pos[1]/scale_ratio
+                if rect_btn_retry.collidepoint(mx, my): # 다시하기 버튼
+                    if sfx_btn: sfx_btn.play()
+                    reset_game(); is_run, t_start = True, pygame.time.get_ticks()
+                    pygame.mixer.music.load(SOUND_PATH+"배경음2.mp3"); pygame.mixer.music.play(-1)
+                if rect_btn_quit.collidepoint(mx, my):  # 종료 버튼
+                    if sfx_btn: sfx_btn.play()
+                    play = False
+            # 게임 진행 중일 때 키보드 조작 처리
+            elif is_run and not is_over and not is_succ:
+                if ev.type == pygame.KEYDOWN:
+                    if ev.key == pygame.K_RIGHT: to_x = m_spd  # 우측 이동 속도 할당
+                    elif ev.key == pygame.K_LEFT: to_x = -m_spd # 좌측 이동 속도 할당
+                    elif ev.key == pygame.K_SPACE:              # 스페이스바 누를 때 총알 발사
+                        if sfx_shoot: sfx_shoot.play()
+                        # 현재 화면에 있는 모든 병사(p)의 위치에서 총알 객체 생성
+                        for p in p_list: b_list.append([p[0]+w_p/2-w_b/2, p[1]])
+                elif ev.type == pygame.KEYUP and ev.key in (pygame.K_RIGHT, pygame.K_LEFT): 
+                    to_x = 0 # 방향키에서 손을 떼면 이동 정지
 
-        gauge_color = (0, 200, 100) if SpO2 >= SPO2_WIN_THRESHOLD else (255, 80, 80)
-        draw_capsule_bar(background, bar_x, bar_y, bar_w, bar_h, ratio, gauge_color)
+    # 상태별 배경화면 렌더링
+    if game_state == STATE_TITLE:
+        background.blit(img_start_bg, (0,0)); background.blit(img_name, rect_name); background.blit(img_btn_start, rect_btn_start)
+    elif game_state == STATE_INTRO:
+        if intro_idx < len(intro_imgs): background.blit(intro_imgs[intro_idx], (0,0))
+    elif game_state == STATE_READY:
+        background.blit(img_start_bg, (0,0)); background.blit(img_ready_start, rect_ready_start)
+    
+    # ------------------
+    # 메인 게임 로직
+    # ------------------
+    elif game_state == STATE_GAME:
+        background.blit(img_bg, (0,0)) # 인게임 맵 배경 깔기
+        
+        # 게임이 실행 중이고 끝나지 않았을 때 프레임 연산
+        if is_run and not is_over and not is_succ:
+            sec = (pygame.time.get_ticks() - t_start) / 1000 # 진행된 시간(초) 계산
+            t_left = max(0, int(TIME_LIMIT - sec))           # 남은 시간 표시용 연산
+            spo2 -= SPO2_DECAY_PER_SEC * (clock.get_time() / 1000) # 매 프레임 시간만큼 SpO2 감소
+            
+            # 게임 오버 및 클리어 판정
+            if spo2 <= 0: spo2, is_over = 0, True # 산소 0이면 즉시 실패
+            if sec >= TIME_LIMIT:                 # 제한 시간이 다 끝났을 때
+                if spo2 >= SPO2_WIN_THRESHOLD: is_succ = True # 90% 이상 유지했으면 성공
+                else: is_over = True                          # 미만이면 실패
 
-        icon_x_spo2 = bar_x
-        icon_y_spo2 = bar_y - ICON_SIZE - 5
-        background.blit(image_icon_spo2, (icon_x_spo2, icon_y_spo2))
-        spo2_text = f"{int(SpO2)}%"
-        draw_text_with_outline(background, spo2_text, font_ui, gauge_color, (0, 0, 0), icon_x_spo2 + ICON_SIZE + 10, icon_y_spo2)
+            # --- 스폰 관리 로직 ---
+            all_e = e_list['dust'] + e_list['cig'] + e_list['food'] # 생성된 적 전체 리스트 병합 (위치 겹침 확인용)
+            
+            # 먼지 스폰 주기 체크 및 생성
+            if sec - t_spawn['dust'] >= DUST_SPAWN_INTERVAL:
+                t_spawn['dust'] = sec; e_list['dust'].append([get_non_overlap_x(all_e, w_d), 0, DUST_HP])
+            # 패스트푸드 등장 조건(시작 후 특정 시간 지남) 및 주기 체크 생성
+            if sec >= FOOD_SPAWN_START and int(sec) - t_spawn['food'] >= FOOD_SPAWN_INTERVAL:
+                t_spawn['food'] = int(sec); e_list['food'].append([get_non_overlap_x(all_e, w_f), 0, FOOD_HP])
+            # 담배 등장 조건 및 주기 체크 생성
+            if sec >= CIGARETTE_SPAWN_START and int(sec) - t_spawn['cig'] >= CIGARETTE_SPAWN_INTERVAL:
+                t_spawn['cig'] = int(sec); e_list['cig'].append([get_non_overlap_x(all_e, w_c), 0, CIGARETTE_HP])
+            
+            # 보스 등장 조건 검사 (생존한 보스가 없고, 대기열에 보스가 남았으며, 지정된 시간이 지났을 때)
+            if (not boss_data['alive'] and boss_data['imgs'] and boss_data['cnt'] < BOSS_MAX_SPAWN 
+                and int(sec)-boss_data['t_last'] >= BOSS_INTERVAL and sec >= BOSS_FIRST_DELAY):
+                if sfx_boss_warn: sfx_boss_warn.play() # 경고음 재생
+                # 보스 상태 활성화 및 데이터 갱신
+                boss_data.update({'alive':True, 'warn':True, 't_warn':pygame.time.get_ticks(), 't_last':int(sec), 
+                                  'x':random.randrange(0, BASE_WIDTH//2-w_boss), 'y':0, 'hp':BOSS_HP})
+                boss_data['cur'] = random.choice(boss_data['imgs']); boss_data['imgs'].remove(boss_data['cur'])
+                boss_data['cnt'] += 1
 
-        current_time = pygame.time.get_ticks()
-        for f_text in floating_texts[:]:
-            f_x, f_y, text, color, start_time = f_text
-            dt = current_time - start_time
-            if dt > FLOAT_TEXT_LIFETIME_MS:
-                floating_texts.remove(f_text)
-                continue
-            f_text[1] -= FLOAT_TEXT_RISE_SPEED * clock.get_time()
-            alpha = max(0, 255 - int((dt / FLOAT_TEXT_LIFETIME_MS) * 255))
-            text_surf = font_ui.render(text, True, color)
-            alpha_surf = pygame.Surface(text_surf.get_size(), pygame.SRCALPHA)
-            alpha_surf.blit(text_surf, (0, 0))
-            alpha_surf.set_alpha(alpha)
-            background.blit(alpha_surf, (f_x + size_alveolus_width/2 - text_surf.get_width()/2, f_y - 40))
+            # 아이템 스폰 처리
+            all_i = itm_list['broc'] + itm_list['water']
+            if int(sec) - t_spawn['broc'] >= BROCCOLI_SPAWN_INTERVAL:
+                t_spawn['broc'] = int(sec)
+                # 아이템은 화면 오른쪽 절반 구역에서 등장하도록 start_x 조절
+                itm_list['broc'].append([get_non_overlap_x(all_i, w_broc, BASE_WIDTH//2, BASE_WIDTH-w_broc, 40), 0])
+            if int(sec) - t_spawn['water'] >= WATER_SPAWN_INTERVAL:
+                t_spawn['water'] = int(sec)
+                itm_list['water'].append([get_non_overlap_x(all_i, w_w, BASE_WIDTH//2, BASE_WIDTH-w_w, 40), 0])
+            
+            # 네블라이저 스폰 처리 (정해진 시간에 맞춰 단 한 번씩만 스폰되도록 times 셋 활용)
+            for t in NEBULIZER_SPAWN_TIMES:
+                if sec >= t and t not in neb_data['times']:
+                    neb_data['times'].add(t)
+                    mx = BASE_WIDTH//2; my = BASE_WIDTH-w_n
+                    neb_data['list'].append([mx if my<=mx else random.randrange(mx, my), 0])
 
-        if boss_warning:
-            elapsed = (pygame.time.get_ticks() - boss_warning_start) / 1000
-            if elapsed > BOSS_WARNING_SEC:
-                boss_warning = False
-            else:
-                shake_x = random.randint(-2, 2)
-                shake_y = random.randint(-2, 2)
-                if int(elapsed * 6) % 2 == 0:
-                    flash = pygame.Surface((BASE_WIDTH, BASE_HEIGHT))
-                    flash.set_alpha(100)
-                    flash.fill((255, 0, 0))
-                    background.blit(flash, (0, 0))
+            # --- 플레이어(병사) 이동 및 이탈 방지 처리 ---
+            for p in p_list: p[0] += to_x # 모든 병사 좌표 이동 적용
+            
+            if p_list: # 리스트에 병사가 존재하면
+                # 제일 왼쪽에 있는 병사가 화면 밖(0 미만)으로 나갔을 때 위치 보정
+                if (mx := min(p[0] for p in p_list)) < 0:
+                    for p in p_list: p[0] -= mx 
+                # 제일 오른쪽에 있는 병사가 화면 오른쪽 끝을 나갔을 때 위치 보정
+                if (mx := max(p[0] for p in p_list)) > BASE_WIDTH - w_p:
+                    for p in p_list: p[0] -= (mx - (BASE_WIDTH - w_p))
+
+            # --- 일반 적(먼지/음식/담배) 물리 처리 (이동, 렌더링, 플레이어 충돌) ---
+            # 각 적군 속성을 튜플 리스트로 묶어 코드 반복을 줄임
+            e_info = [('dust', img_dust, w_d, h_d, DUST_SPEED, DUST_HP, SCORE_DUST, SPO2_GAIN_DUST),
+                      ('food', img_food, w_f, h_f, FOOD_SPEED, FOOD_HP, SCORE_FOOD, SPO2_GAIN_FOOD),
+                      ('cig', img_cig, w_c, h_c, CIGARETTE_SPEED, CIGARETTE_HP, SCORE_CIGARETTE, SPO2_GAIN_CIGARETTE)]
+            
+            for key, img, w, h, spd, mhp, sc, s_gn in e_info:
+                for e in e_list[key][:]: # 복사본[:]을 순회하며 원본 리스트를 안전하게 삭제
+                    e[1] += spd; background.blit(img, (e[0], e[1])) # 위치 증가 후 그리기
+                    draw_hp(background, e[0]+w/2-MINI_HP_BAR_W/2, e[1]-12, e[2], mhp) # 체력바 그리기
+                    
+                    hit = False; rect = pygame.Rect(e[0], e[1], w, h) # 적군 히트박스 생성
+                    for p in p_list[:]: # 병사들과의 충돌 검사
+                        if rect.colliderect(pygame.Rect(p[0], p[1], w_p, h_p)): # 겹쳤을 경우
+                            p_list.remove(p); hit = True # 병사 삭제
+                            if sfx_die: sfx_die.play()   # 병사 사망 효과음 재생
+                            if e in e_list[key]: e_list[key].remove(e) # 적도 함께 삭제(자폭)
+                            break # 한 프레임에 하나의 병사만 피해 입도록 반복 종료
+                    if hit:
+                        if not p_list: is_over = True # 병사가 다 죽었으면 게임 오버
+                        continue # 이 적군은 이미 파괴되었으므로 아래 코드 건너뜀
+                    if e[1] >= BASE_HEIGHT - h: is_over = True # 적이 화면 바닥에 닿으면 게임 오버
+
+            # --- 보스 이동 및 물리 처리 ---
+            if boss_data['alive']:
+                boss_data['y'] += BOSS_SPEED; background.blit(boss_data['cur'], (boss_data['x'], boss_data['y']))
+                draw_hp(background, boss_data['x']+w_boss/2-BOSS_HP_BAR_W/2, boss_data['y']-25, boss_data['hp'], BOSS_HP, True)
+                rect = pygame.Rect(boss_data['x'], boss_data['y'], w_boss, h_boss)
+                for p in p_list[:]:
+                    if rect.colliderect(pygame.Rect(p[0], p[1], w_p, h_p)):
+                        p_list.remove(p) # 보스와 닿으면 병사 1명 증발
+                        if sfx_die: sfx_die.play()
+                        boss_data['hp'] -= 5 # 보스는 한 번에 죽지 않고 체력만 감소
+                        if boss_data['hp'] <= 0: # 체력이 0 이하면 보스 처치 판정
+                            boss_data['alive'] = False; score += SCORE_BOSS; spo2 = min(100, spo2 + SPO2_GAIN_BOSS)
+                        break
+                if not p_list or boss_data['y'] >= BASE_HEIGHT - h_boss: is_over = True # 병사 전멸이거나 보스가 바닥 도달 시 오버
+
+            # --- 아이템(브로콜리, 물) 이동 및 획득 처리 ---
+            i_info = [('broc', img_broc, w_broc, h_broc, BROCCOLI_SPEED), ('water', img_water, w_w, h_w, WATER_SPEED)]
+            for key, img, w, h, spd in i_info:
+                for i in itm_list[key][:]:
+                    i[1] += spd; background.blit(img, (i[0], i[1]))
+                    if i[1] >= BASE_HEIGHT - h: itm_list[key].remove(i); continue # 바닥에 닿은 아이템 지우기
+                    
+                    for p in p_list: # 아이템과 병사 충돌 확인
+                        if pygame.Rect(i[0], i[1], w, h).colliderect(pygame.Rect(p[0], p[1], w_p, h_p)):
+                            if sfx_item: sfx_item.play()
+                            itm_list[key].remove(i) # 획득한 아이템 삭제
+                            if key == 'broc': # 브로콜리 획득 시 병사 수 증가 및 자리 재배치
+                                f_txts.append([p[0], p[1], "Squad +1", (0, 255, 50), pygame.time.get_ticks()])
+                                if len(p_list) < BROCCOLI_MAX_STACK:
+                                    ox, oy = w_p*BROCCOLI_INSERT_OFFSET_RATIO, h_p*0.6
+                                    if len(p_list)%ROW_CAPACITY == 0: 
+                                        # 10단위가 꽉 찼을 때는 윗줄로 겹쳐서 새 대열 시작
+                                        p_list.insert(0, [max(pl[0] for pl in p_list), min(pl[1] for pl in p_list)-oy])
+                                    else: 
+                                        # 평소에는 왼쪽으로 계속 이어붙이기
+                                        p_list.insert(0, [p_list[0][0]-ox, p_list[0][1]])
+                            elif key == 'water': # 물 획득 시 이동 속도 증가
+                                f_txts.append([p[0], p[1], "Speed UP!", (0, 200, 255), pygame.time.get_ticks()])
+                                m_spd += WATER_SPEED_GAIN
+                            break # 충돌 처리 후 반복 종료
+
+            # --- 필살기 네블라이저 처리 ---
+            for neb in neb_data['list'][:]:
+                neb[1] += NEBULIZER_SPEED; background.blit(img_neb, (neb[0], neb[1]))
+                if neb[1] >= BASE_HEIGHT - h_n: neb_data['list'].remove(neb); continue
                 
-                if image_boss_warning:
-                    bw_rect = image_boss_warning.get_rect(center=(BASE_WIDTH / 2, BASE_HEIGHT / 2 - 200))
-                    background.blit(image_boss_warning, bw_rect)
-                else:
-                    txt = font_big.render("BOSS WARNING !!!", True, (255, 255, 0))
-                    background.blit(txt, (BASE_WIDTH / 2 - txt.get_width() / 2, BASE_HEIGHT / 2 - 200))
+                rect = pygame.Rect(neb[0], neb[1], w_n, h_n)
+                # any 함수로 하나라도 닿은 병사가 있는지 확인
+                if any(rect.colliderect(pygame.Rect(p[0], p[1], w_p, h_p)) for p in p_list):
+                    if sfx_neb: sfx_neb.play()
+                    # 병사 머리 위에 데미지 알림 팝업 추가
+                    f_txts.append([p_list[0][0], p_list[0][1], "DAMAGE ALL -5", (0,220,255), pygame.time.get_ticks()])
+                    neb_data['list'].remove(neb); neb_data.update({'on':True, 't_on':pygame.time.get_ticks()}) # 획득 시 플래시 효과 발동
+                    
+                    # 화면에 있는 모든 적의 체력을 5 감소
+                    for k,_,w,_,_,_,sc,sgn in e_info:
+                        for e in e_list[k][:]:
+                            e[2] -= NEBULIZER_ALL_ENEMY_HP_DEC; dmg_pops.append((e[0]+w//2, e[1], pygame.time.get_ticks())) # 데미지 숫자 이펙트 추가
+                            if e[2] <= 0: e_list[k].remove(e); score += sc; spo2 = min(100, spo2 + sgn) # 체력 0 이하면 파괴 처리
+                    if boss_data['alive']:
+                        boss_data['hp'] -= NEBULIZER_ALL_ENEMY_HP_DEC; dmg_pops.append((boss_data['x']+w_boss//2, boss_data['y'], pygame.time.get_ticks()))
+                        if boss_data['hp'] <= 0: boss_data['alive'] = False; score += SCORE_BOSS; spo2 = min(100, spo2 + SPO2_GAIN_BOSS)
 
-        if nebulizer_effect:
-            elapsed_ms = pygame.time.get_ticks() - nebulizer_effect_start
-            if elapsed_ms > NEBULIZER_EFFECT_DURATION_MS:
-                nebulizer_effect = False
-            else:
-                flash = pygame.Surface((BASE_WIDTH // 2, BASE_HEIGHT))
-                flash.set_alpha(90)
-                flash.fill((0, 220, 255))
-                background.blit(flash, (0, 0))
+            # --- 발사된 총알 물리 처리 ---
+            for b in b_list[:]:
+                b[1] -= BULLET_SPEED; background.blit(img_bullet, (b[0], b[1]))
+                if b[1] <= 0: b_list.remove(b); continue # 화면 밖을 벗어난 총알 삭제
                 
-                if image_nebulizer_effect:
-                    neb_eff_rect = image_nebulizer_effect.get_rect(center=(BASE_WIDTH / 2, BASE_HEIGHT / 2 - 200)) 
-                    background.blit(image_nebulizer_effect, neb_eff_rect)
-                else:
-                    neb_txt = font_big.render("NEBULIZER!", True, (0, 0, 0))
-                    background.blit(neb_txt, (BASE_WIDTH / 2 - neb_txt.get_width() / 2, 500))
+                hit = False
+                # 총알의 좌표를 일반 적들의 박스 좌표와 비교하여 명중 확인
+                for k,_,w,h,_,_,sc,sgn in e_info:
+                    for e in e_list[k][:]:
+                        if e[0] < b[0] < e[0]+w and e[1] < b[1] < e[1]+h:
+                            e[2]-=1; b_list.remove(b); hit=True # 적 체력 감소 후 총알 파괴
+                            if e[2]<=0: e_list[k].remove(e); score+=sc; spo2 = min(100, spo2+sgn)
+                            break
+                    if hit: break
+                if hit: continue
+                # 보스와의 총알 명중 판정
+                if boss_data['alive'] and boss_data['x'] < b[0] < boss_data['x']+w_boss and boss_data['y'] < b[1] < boss_data['y']+h_boss:
+                    boss_data['hp']-=1; b_list.remove(b)
+                    if boss_data['hp']<=0: boss_data['alive']=False; score+=SCORE_BOSS; spo2 = min(100, spo2+SPO2_GAIN_BOSS)
 
-        for popup in damage_popups[:]:
-            x, y, st = popup
-            dt = pygame.time.get_ticks() - st
-            if dt > POPUP_LIFETIME_MS:
-                damage_popups.remove(popup)
-                continue
-            dy = dt * POPUP_RISE_PER_MS
-            alpha = max(0, 255 - int(dt * POPUP_ALPHA_DEC_PER_MS))
-            pop_surf = font_small.render(f"-{NEBULIZER_ALL_ENEMY_HP_DEC}", True, (0, 220, 255))
-            pop_surf.set_alpha(alpha)
-            background.blit(pop_surf, (x - pop_surf.get_width() / 2, (y - 30) - dy))
+        # ------------------
+        # UI 및 이펙트 렌더링 (그리기 연산 전용 블록)
+        # ------------------
+        
+        # Y좌표를 기준으로 병사들을 정렬하여, 뒤(위)에 있는 병사가 먼저 그려지고 앞 병사에게 자연스럽게 가려지도록 렌더링
+        for p in sorted(p_list, key=lambda val: val[1]): background.blit(img_player, (p[0], p[1]))
+        
+        # 최상단 점수, 시간, SpO2 상태 UI 렌더링
+        background.blit(img_icon_star, (20,20)); draw_txt(background, f"{score}", font_ui, (255,215,0), (80,50,0), 20+ICON_SIZE+10, 20)
+        background.blit(img_icon_time, (BASE_WIDTH//2-50,20)); draw_txt(background, f"{t_left if 't_left' in locals() else TIME_LIMIT}", font_ui, (255,255,255), (50,50,50), BASE_WIDTH//2-50+ICON_SIZE+10, 20)
+        draw_bar(background, BASE_WIDTH//2-200, 65, 400, 24, spo2/100.0, (0,200,100) if spo2>=SPO2_WIN_THRESHOLD else (255,80,80))
+        background.blit(img_icon_spo2, (BASE_WIDTH//2-200, 65-ICON_SIZE-5))
+        draw_txt(background, f"{int(spo2)}%", font_ui, (0,200,100) if spo2>=SPO2_WIN_THRESHOLD else (255,80,80), (0,0,0), BASE_WIDTH//2-200+ICON_SIZE+10, 65-ICON_SIZE-5)
 
-        # =================================================
-        # END SCREEN (성공/실패) 
-        # =================================================
-        if game_over or success:
-            if not end_sound_played:
-                pygame.mixer.music.stop()
-                if success:
-                    sfx_success.play()
-                else:
-                    sfx_fail.play()
-                end_sound_played = True
+        ct = pygame.time.get_ticks()
+        
+        # 아이템 획득 등의 플로팅 텍스트 애니메이션 계산 (서서히 사라지고 위로 상승)
+        for f in f_txts[:]:
+            dt = ct - f[4]
+            if dt > FLOAT_TEXT_LIFETIME_MS: f_txts.remove(f); continue
+            f[1] -= FLOAT_TEXT_RISE_SPEED * clock.get_time() # Y좌표 지속 차감
+            ts = font_ui.render(f[2], True, f[3]); a_surf = pygame.Surface(ts.get_size(), pygame.SRCALPHA)
+            a_surf.blit(ts, (0,0)); a_surf.set_alpha(max(0, 255 - int((dt/FLOAT_TEXT_LIFETIME_MS)*255))) # 알파값 계산
+            background.blit(a_surf, (f[0]+w_p/2-ts.get_width()/2, f[1]-40))
 
-            if success:
-                background.blit(image_success_bg, (0, 0))
+        # 보스 등장 시 화면 붉은 플래시 및 경고 이미지(텍스트) 흔들림(shake) 연출
+        if boss_data['warn']:
+            el = (ct - boss_data['t_warn']) / 1000
+            if el > BOSS_WARNING_SEC: boss_data['warn'] = False # 시간이 지나면 경고 연출 종료
             else:
-                background.blit(image_fail_bg, (0, 0))
+                sh_x, sh_y = random.randint(-2,2), random.randint(-2,2)
+                if int(el*6)%2 == 0: # 1초에 3번 깜빡이는 붉은 플래시 효과
+                    fl = pygame.Surface((BASE_WIDTH, BASE_HEIGHT)); fl.set_alpha(100); fl.fill((255,0,0)); background.blit(fl, (0,0))
+                if img_warn_boss: background.blit(img_warn_boss, img_warn_boss.get_rect(center=(BASE_WIDTH/2, BASE_HEIGHT/2-200)))
+                else: txt = font_bg.render("BOSS WARNING !!!", True, (255,255,0)); background.blit(txt, (BASE_WIDTH/2-txt.get_width()/2, BASE_HEIGHT/2-200))
 
-            board_w = 600
-            board_h = 460 
-            board_x = BASE_WIDTH // 2 - board_w // 2
-            board_y = BASE_HEIGHT // 2 - 280 
-            
-            board_surface = pygame.Surface((board_w, board_h), pygame.SRCALPHA)
-            board_surface.fill((0, 0, 0, 180)) 
-            pygame.draw.rect(board_surface, (255, 255, 255, 100), (0, 0, board_w, board_h), width=4, border_radius=20)
-            
-            background.blit(board_surface, (board_x, board_y))
-
-            if game_over:
-                if image_gameover_title:
-                    title_rect = image_gameover_title.get_rect(center=(BASE_WIDTH // 2, board_y + 80))
-                    background.blit(image_gameover_title, title_rect)
-                else:
-                    draw_text_with_outline(background, "GAME OVER", font_title, (255, 80, 80), (0, 0, 0), 
-                                           BASE_WIDTH // 2 - font_title.size("GAME OVER")[0] // 2, board_y + 20)
+        # 네블라이저 발동 시 푸른색 화면 플래시 연출
+        if neb_data['on']:
+            if ct - neb_data['t_on'] > NEBULIZER_EFFECT_DURATION_MS: neb_data['on'] = False
             else:
-                if image_success_title:
-                    title_rect = image_success_title.get_rect(center=(BASE_WIDTH // 2, board_y + 80))
-                    background.blit(image_success_title, title_rect)
-                else:
-                    draw_text_with_outline(background, "SUCCESS!", font_title, (100, 255, 100), (0, 0, 0), 
-                                           BASE_WIDTH // 2 - font_title.size("SUCCESS!")[0] // 2, board_y + 20)
+                fl = pygame.Surface((BASE_WIDTH, BASE_HEIGHT)); fl.set_alpha(90); fl.fill((0,220,255)); background.blit(fl, (0,0))
+                if img_neb_effect: background.blit(img_neb_effect, img_neb_effect.get_rect(center=(BASE_WIDTH/2, 400)))
 
-            score_y = board_y + 250
-            score_label = f"FINAL SCORE :  {point}"
-            draw_text_with_outline(background, score_label, font_big, (255, 215, 0), (0, 0, 0), 
-                                   BASE_WIDTH // 2 - font_big.size(score_label)[0] // 2, score_y)
+        # 네블라이저 데미지 팝업 애니메이션 
+        for d in dmg_pops[:]:
+            dt = ct - d[2]
+            if dt > POPUP_LIFETIME_MS: dmg_pops.remove(d); continue
+            ts = font_sm.render(f"-{NEBULIZER_ALL_ENEMY_HP_DEC}", True, (0,220,255)); ts.set_alpha(max(0, 255 - int(dt*POPUP_ALPHA_DEC_PER_MS)))
+            background.blit(ts, (d[0]-ts.get_width()/2, (d[1]-30) - dt*POPUP_RISE_PER_MS))
 
-            spo2_y = board_y + 330
-            spo2_ratio = SpO2 / 100.0
-            spo2_color = (0, 200, 100) if SpO2 >= SPO2_WIN_THRESHOLD else (255, 80, 80)
+        # ------------------
+        # 게임 종료 결과 화면 (검은색 반투명 패널 및 최종 점수 안내)
+        # ------------------
+        if is_over or is_succ:
+            if not snd_end: # 1회만 음악 멈추고 효과음 재생
+                pygame.mixer.music.stop(); (sfx_succ.play() if is_succ and sfx_succ else sfx_fail.play() if sfx_fail else None); snd_end = True
             
-            spo2_status_txt = f"SpO2 Danger! ({int(SpO2)}%)" if SpO2 < SPO2_WIN_THRESHOLD else f"SpO2 Normal ({int(SpO2)}%)"
+            # 성공/실패 배경 렌더링
+            background.blit(img_succ_bg if is_succ else img_fail_bg, (0,0))
             
-            text_width = font_ui.size(spo2_status_txt)[0]
-            total_width = ICON_SIZE + 10 + text_width
-            start_x = BASE_WIDTH // 2 - total_width // 2
-
-            background.blit(image_icon_spo2, (start_x, spo2_y))
-            draw_text_with_outline(background, spo2_status_txt, font_ui, spo2_color, (0, 0, 0), 
-                                   start_x + ICON_SIZE + 10, spo2_y)
+            # 중앙 결과 안내 보드(반투명 박스) 생성 및 렌더링
+            b_w, b_h = 600, 460; bx, by = BASE_WIDTH//2-b_w//2, BASE_HEIGHT//2-280
+            bs = pygame.Surface((b_w, b_h), pygame.SRCALPHA); bs.fill((0,0,0,180))
+            pygame.draw.rect(bs, (255,255,255,100), (0,0,b_w,b_h), width=4, border_radius=20); background.blit(bs, (bx, by))
             
-            draw_capsule_bar(background, BASE_WIDTH // 2 - 150, spo2_y + 50, 300, 24, spo2_ratio, spo2_color)
-
-            retry_rect_img.center = (BASE_WIDTH / 2 - 140, board_y + board_h + 90)
-            quit_rect_img.center = (BASE_WIDTH / 2 + 140, board_y + board_h + 90)
+            # 타이틀(성공/실패 이미지) 삽입
+            tit = img_title_succ if is_succ else img_title_gameover
+            if tit: background.blit(tit, tit.get_rect(center=(BASE_WIDTH//2, by+80)))
+            else: draw_txt(background, "SUCCESS!" if is_succ else "GAME OVER", font_title, (100,255,100) if is_succ else (255,80,80), (0,0,0), BASE_WIDTH//2-font_title.size("SUCCESS!" if is_succ else "GAME OVER")[0]//2, by+20)
             
-            background.blit(image_retry_button, retry_rect_img)
-            background.blit(image_quit_button, quit_rect_img)
+            # 최종 점수 삽입
+            sc_lbl = f"FINAL SCORE :  {score}"
+            draw_txt(background, sc_lbl, font_bg, (255,215,0), (0,0,0), BASE_WIDTH//2-font_bg.size(sc_lbl)[0]//2, by+250)
+            
+            # 최종 SpO2 상태 및 게이지 삽입
+            c_sp = (0,200,100) if spo2>=SPO2_WIN_THRESHOLD else (255,80,80)
+            sp_txt = f"SpO2 Normal ({int(spo2)}%)" if spo2>=SPO2_WIN_THRESHOLD else f"SpO2 Danger! ({int(spo2)}%)"
+            sx = BASE_WIDTH//2 - (ICON_SIZE+10+font_ui.size(sp_txt)[0])//2
+            background.blit(img_icon_spo2, (sx, by+330)); draw_txt(background, sp_txt, font_ui, c_sp, (0,0,0), sx+ICON_SIZE+10, by+330)
+            draw_bar(background, BASE_WIDTH//2-150, by+380, 300, 24, spo2/100.0, c_sp)
+            
+            # 버튼(다시하기, 종료) 삽입
+            rect_btn_retry.center, rect_btn_quit.center = (BASE_WIDTH/2-140, by+b_h+90), (BASE_WIDTH/2+140, by+b_h+90)
+            background.blit(img_btn_retry, rect_btn_retry); background.blit(img_btn_quit, rect_btn_quit)
 
-    # =====================================================
-    # PRESENT (스케일링 출력)
-    # =====================================================
+    # 완성된 Background 서피스를 화면 배율(Scale)에 맞게 조정한 후 실제 스크린에 출력 (흔들림 효과 변수 반영)
     scaled = pygame.transform.scale(background, (display_w, display_h))
-    screen.fill((0, 0, 0))
-    screen.blit(scaled, (shake_x, shake_y))
-    pygame.display.update()
+    screen.fill((0,0,0)); screen.blit(scaled, (sh_x, sh_y)); pygame.display.update()
 
 pygame.quit()
