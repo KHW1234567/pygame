@@ -97,10 +97,6 @@ BOSS_HP_BAR_W = 200              # 보스 체력바 가로 넓이
 BOSS_HP_BAR_H = 15               # 보스 체력바 세로 높이
 ICON_SIZE = 32                   # 화면 상단 정보 UI(별, 시계, 산소) 아이콘 크기
 
-# 시작화면 UI/레이아웃
-TITLE_NAME_Y_RATIO = 0.22         # 타이틀 화면의 게임 로고 Y축 위치 비율 (화면 상단 기준)
-TITLE_STARTBTN_Y_RATIO = 0.85     # 타이틀 화면의 시작 버튼 Y축 위치 비율 (화면 하단 기준)
-
 # =====================================================
 # PATH (파일 경로 설정)
 # =====================================================
@@ -140,33 +136,34 @@ def load_img(path, scale=1.0):
         return img
     except: 
         # 파일이 없을 경우 게임이 튕기지 않도록 검은색의 작은 더미 사각형 반환
-        return pygame.Surface((50, 50)) 
+        return pygame.Surface((50, 50))
 
-# 각종 UI 및 배경 이미지 로드 및 크기/위치(Rect) 지정
+# 각종 UI 및 배경 이미지 로드 및 크기/위치 지정
+# 시작화면 UI/레이아웃
 img_start_bg = pygame.transform.scale(load_img(IMG_PATH+"game_start.png"), (BASE_WIDTH, BASE_HEIGHT))
 img_name = load_img(IMG_PATH+"game_name.png", 0.85)
 img_btn_start = load_img(IMG_PATH+"start_button.png", 0.35)
-rect_btn_start = img_btn_start.get_rect(center=(BASE_WIDTH//2, int(BASE_HEIGHT*TITLE_STARTBTN_Y_RATIO)))
-rect_name = img_name.get_rect(center=(BASE_WIDTH//2, int(BASE_HEIGHT*TITLE_NAME_Y_RATIO)+50))
+rect_name = img_name.get_rect(center=(BASE_WIDTH//2, int(BASE_HEIGHT*0.22)+50))
+rect_btn_start = img_btn_start.get_rect(center=(BASE_WIDTH//2, int(BASE_HEIGHT*0.85)))
 
-img_ready_start = load_img(IMG_PATH+"버튼_START.png", 0.8)
-rect_ready_start = img_ready_start.get_rect(center=(BASE_WIDTH/2, BASE_HEIGHT/2+300))
+img_ready_start = load_img(IMG_PATH+"버튼_START.png", 0.85)
+rect_ready_start = img_ready_start.get_rect(center=(BASE_WIDTH/2, int(BASE_HEIGHT*0.85)))
 
-# 결과 화면(성공/실패) 배경 및 텍스트 이미지 로드
-img_succ_bg = pygame.transform.scale(load_img(IMG_PATH+"success.png"), (BASE_WIDTH, BASE_HEIGHT))
+# 결과 화면(성공/실패) UI/레이아웃
+img_success_bg = pygame.transform.scale(load_img(IMG_PATH+"success.png"), (BASE_WIDTH, BASE_HEIGHT))
 img_fail_bg = pygame.transform.scale(load_img(IMG_PATH+"fail.png"), (BASE_WIDTH, BASE_HEIGHT))
 img_title_gameover = load_img(IMG_PATH+"button_fail.png", 0.8)
 img_title_succ = load_img(IMG_PATH+"button_success.png", 0.8)
 
-# 다시하기 및 종료 버튼 이미지 로드
+# 다시하기 및 종료 버튼 이미지 로드 및 위치 지정
 img_btn_retry = load_img(IMG_PATH+"버튼_RETRY.png", 0.85)
 rect_btn_retry = img_btn_retry.get_rect()
 img_btn_quit = load_img(IMG_PATH+"버튼_QUIT.png", 0.85)
 rect_btn_quit = img_btn_quit.get_rect()
 
-# 특수 이펙트 이미지 로드
-img_warn_boss = load_img(IMG_PATH+"warn_boss.png", 0.7)
-img_neb_effect = load_img(IMG_PATH+"effect_네불라이저.png", NEBULIZER_EFFECT_SCALE)
+# 특수 이펙트 이미지 로드 및 크기 조절
+img_warning_boss = load_img(IMG_PATH+"warning_boss.png", 0.7)
+img_nebulizer_effect = load_img(IMG_PATH+"effect_네불라이저.png", NEBULIZER_EFFECT_SCALE)
 
 # 인게임 배경 및 상단 아이콘 로드
 img_bg = pygame.transform.scale(load_img(IMG_PATH+"background_highR.png"), (BASE_WIDTH, BASE_HEIGHT))
@@ -586,7 +583,7 @@ while play:
                 sh_x, sh_y = random.randint(-2,2), random.randint(-2,2)
                 if int(el*6)%2 == 0: # 1초에 3번 깜빡이는 붉은 플래시 효과
                     fl = pygame.Surface((BASE_WIDTH, BASE_HEIGHT)); fl.set_alpha(100); fl.fill((255,0,0)); background.blit(fl, (0,0))
-                if img_warn_boss: background.blit(img_warn_boss, img_warn_boss.get_rect(center=(BASE_WIDTH/2, BASE_HEIGHT/2-200)))
+                if img_warning_boss: background.blit(img_warning_boss, img_warning_boss.get_rect(center=(BASE_WIDTH/2, BASE_HEIGHT/2-200)))
                 else: txt = font_bg.render("BOSS WARNING !!!", True, (255,255,0)); background.blit(txt, (BASE_WIDTH/2-txt.get_width()/2, BASE_HEIGHT/2-200))
 
         # 네불라이저 발동 시 푸른색 화면 플래시 연출
@@ -594,7 +591,7 @@ while play:
             if ct - neb_data['t_on'] > NEBULIZER_EFFECT_DURATION_MS: neb_data['on'] = False
             else:
                 fl = pygame.Surface((BASE_WIDTH, BASE_HEIGHT)); fl.set_alpha(90); fl.fill((0,220,255)); background.blit(fl, (0,0))
-                if img_neb_effect: background.blit(img_neb_effect, img_neb_effect.get_rect(center=(BASE_WIDTH/2, 400)))
+                if img_nebulizer_effect: background.blit(img_nebulizer_effect, img_nebulizer_effect.get_rect(center=(BASE_WIDTH/2, 400)))
 
         # 네불라이저 데미지 팝업 애니메이션 
         for d in dmg_pops[:]:
@@ -616,7 +613,7 @@ while play:
                 pygame.mixer.music.stop(); (sfx_succ.play() if is_succ and sfx_succ else sfx_fail.play() if sfx_fail else None); snd_end = True
             
             # 성공/실패 배경 렌더링
-            background.blit(img_succ_bg if is_succ else img_fail_bg, (0,0))
+            background.blit(img_success_bg if is_succ else img_fail_bg, (0,0))
             
             # 중앙 결과 안내 보드(반투명 박스) 생성 및 렌더링
             b_w, b_h = 600, 460; bx, by = BASE_WIDTH//2-b_w//2, BASE_HEIGHT//2-280
