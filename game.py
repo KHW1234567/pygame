@@ -3,93 +3,80 @@ import random
 import os
 
 # =====================================================
-# 1. TUNING / BALANCE (수치 조절: 게임 밸런싱 관련 파라미터 모음)
+# 1. 수치 조절: 게임 밸런스 및 난이도 조절을 위한 상수 값 설정
 # =====================================================
-# - 화면/프레임
-BASE_WIDTH = 700            # 기준 화면 가로 해상도
-BASE_HEIGHT = 900           # 기준 화면 세로 해상도
-FPS = 60                    # 초당 프레임 수 (게임 속도 기준)
+# 화면/프레임
+BASE_WIDTH = 700              # 기준 화면 가로 넓이
+BASE_HEIGHT = 900             # 기준 화면 세로 높이
+FPS = 60                      # 초당 프레임 수 (게임 속도 기준)
 
-# - UI/레이아웃(비율/위치)
-TITLE_NAME_Y_RATIO = 0.22         # 타이틀 화면의 게임 로고 Y축 위치 비율 (화면 상단 기준)
-TITLE_STARTBTN_Y_RATIO = 0.85     # 타이틀 화면의 시작 버튼 Y축 위치 비율 (화면 하단 기준)
+# SpO2 및 시간 관련
+SPO2_START = 100              # 게임 시작 시 초기 산소포화도(SpO2) 수치
+SPO2_DECAY_PER_SEC = 3.5      # 1초당 감소하는 산소포화도 수치 (100부터 1초마다 3.5씩 감소)
+SPO2_WIN_THRESHOLD = 90       # 제한시간 내에 유지해야 하는 최소 SpO2 수치 (90% 이상이면 성공)
+TIME_LIMIT = 60               # 게임 시간 제한 (초)
 
-# 플로팅 텍스트 및 적 체력바 관련 수치
-FLOAT_TEXT_LIFETIME_MS = 800     # 머리 위로 뜨는 텍스트(데미지 등)가 유지되는 시간 (밀리초)
-FLOAT_TEXT_RISE_SPEED = 0.05     # 머리 위로 뜨는 텍스트가 위로 올라가는 속도
-MINI_HP_BAR_W = 30               # 일반 적군(먼지, 음식 등) 미니 체력바의 가로 넓이
-MINI_HP_BAR_H = 6                # 일반 적군 미니 체력바의 세로 높이
-BOSS_HP_BAR_W = 200              # 보스 체력바의 가로 넓이
-BOSS_HP_BAR_H = 15               # 보스 체력바의 세로 높이
-ICON_SIZE = 32                   # 화면 상단 정보 UI(별, 시계, 산소)의 아이콘 크기
+# 이미지 크기 배율
+SCALE_ALVEOLUS = 0.35         # 플레이어(폐포 병사)
+SCALE_BULLET = 0.3            # 총알
+SCALE_DUST = 0.3              # 적군: 먼지
+SCALE_FOOD = 0.5              # 적군: 고지방/고당분
+SCALE_CIGARETTE = 0.7         # 적군: 담배
+SCALE_BOSS = 1.2              # 적군: 보스
+SCALE_BROCCOLI = 0.3          # 아이템: 브로콜리
+SCALE_WATER = 0.3             # 아이템: 물
+NEBULIZER_SCALE = 0.15        # 필살기: 네불라이저
+NEBULIZER_EFFECT_SCALE = 0.5  # 네불라이저 발동 시 화면에 뜨는 팝업 이펙트 이미지
 
-# 스케일(이미지 크기 비율)
-SCALE_ALVEOLUS = 0.35         # 플레이어(폐포 병사) 이미지 배율
-SCALE_BULLET = 0.3            # 총알 이미지 배율
-SCALE_DUST = 0.3              # 먼지(적) 이미지 배율
-SCALE_FOOD = 0.5              # 고지방/고당분(적) 이미지 배율
-SCALE_CIGARETTE = 0.7         # 담배(적) 이미지 배율
-SCALE_BOSS = 1.2              # 보스 이미지 배율
-SCALE_BROCCOLI = 0.3          # 브로콜리(아이템) 이미지 배율
-SCALE_WATER = 0.3             # 물(아이템) 이미지 배율
-NEBULIZER_SCALE = 0.15        # 네불라이저(필살기 아이템) 이미지 배율
-NEBULIZER_EFFECT_SCALE = 0.5  # 네불라이저 발동 시 화면에 뜨는 팝업 이펙트 이미지 배율
-
-# 이동/속도
+# 이동 속도
 PLAYER_BASE_SPEED = 3         # 플레이어 좌우 이동 기본 속도
 BULLET_SPEED = 8              # 발사된 총알이 위로 날아가는 속도
-DUST_SPEED = 2.0              # 먼지가 떨어지는 속도
-FOOD_SPEED = 1.5              # 고지방/고당분이 떨어지는 속도
-CIGARETTE_SPEED = 1.0         # 담배가 떨어지는 속도
-BOSS_SPEED = 1.2              # 보스가 떨어지는 속도
-BROCCOLI_SPEED = 2.5          # 브로콜리가 떨어지는 속도
-WATER_SPEED = 2.5             # 물이 떨어지는 속도
-NEBULIZER_SPEED = 2.0         # 네불라이저 아이템이 떨어지는 속도
+DUST_SPEED = 2.0              # 먼지가 다가오는 속도
+FOOD_SPEED = 1.5              # 고지방/고당분
+CIGARETTE_SPEED = 1.0         # 담배
+BOSS_SPEED = 1.2              # 보스
+BROCCOLI_SPEED = 2.5          # 브로콜리
+WATER_SPEED = 2.5             # 물
+NEBULIZER_SPEED = 2.0         # 네불라이저
 
-# 스폰 (초 단위: 등장 주기)
-DUST_SPAWN_INTERVAL = 0.15            # 먼지가 생성되는 간격 (초)
-FOOD_SPAWN_START = 10                 # 패스트푸드가 처음 등장하기 시작하는 시간 (10초 후)
-FOOD_SPAWN_INTERVAL = 1               # 패스트푸드가 생성되는 간격 (초)
+# 스폰 (등장 및 생성 주기)
+DUST_SPAWN_INTERVAL = 0.15            # 먼지가 생성되는 간격
+FOOD_SPAWN_START = 10                 # 고지방/고단백 처음 등장하기 시작하는 시간 (10초 후)
+FOOD_SPAWN_INTERVAL = 1               # 고지방/고단백 생성되는 간격
 CIGARETTE_SPAWN_START = 15            # 담배가 처음 등장하기 시작하는 시간 (15초 후)
-CIGARETTE_SPAWN_INTERVAL = 2          # 담배가 생성되는 간격 (초)
-BROCCOLI_SPAWN_INTERVAL = 2           # 브로콜리 아이템 생성 간격 (초)
-WATER_SPAWN_INTERVAL = 5              # 물 아이템 생성 간격 (초)
+CIGARETTE_SPAWN_INTERVAL = 2          # 담배가 생성되는 간격
+BROCCOLI_SPAWN_INTERVAL = 2           # 브로콜리 아이템 생성 간격
+WATER_SPAWN_INTERVAL = 5              # 물 아이템 생성 간격
 NEBULIZER_SPAWN_TIMES = [18, 33, 48]  # 네불라이저가 떨어지는 특정 시간대(초) 리스트
-
-# HP/점수/조건
-SPO2_START = 100                 # 게임 시작 시 초기 산소포화도(SpO2) 수치
-SPO2_DECAY_PER_SEC = 3.5         # 1초당 자연적으로 감소하는 산소포화도 수치
-SPO2_WIN_THRESHOLD = 90          # 게임 클리어 시 승리(SUCCESS)로 인정되는 최소 산소포화도 수치
-TIME_LIMIT = 60                  # 한 판의 총 제한 시간 (초)
 
 # 보스 스폰 관련 (초 단위)
 BOSS_FIRST_DELAY = 20            # 게임 시작 후 보스가 최초로 등장하기까지 걸리는 시간
-BOSS_INTERVAL = 15               # 보스 연속 등장 간격 (초)
+BOSS_INTERVAL = 15               # 보스 연속 등장 간격
 BOSS_MAX_SPAWN = 3               # 한 게임당 등장할 수 있는 보스의 최대 횟수
-BOSS_WARNING_SEC = 3             # 보스 등장 전 경고창(Warning)이 화면에 유지되는 시간
+BOSS_WARNING_SEC = 3             # 보스 등장 경고창(Warning)이 화면에 유지되는 시간
 
-# 적 체력 설정
-DUST_HP = 1                      # 먼지 체력
-FOOD_HP = 3                      # 고지방/고당분 체력
-CIGARETTE_HP = 5                 # 담배 체력
-BOSS_HP = 70                     # 보스 체력
+# 적군 체력 설정
+DUST_HP = 1                      # 먼지
+FOOD_HP = 3                      # 고지방/고당분
+CIGARETTE_HP = 5                 # 담배
+BOSS_HP = 70                     # 보스
 
 # 처치 시 획득 점수
-SCORE_DUST = 1                   # 먼지 처치 시 점수
-SCORE_FOOD = 3                   # 고지방/고당분 처치 시 점수
-SCORE_CIGARETTE = 5              # 담배 처치 시 점수
-SCORE_BOSS = 10                  # 보스 처치 시 점수
+SCORE_DUST = 1                   # 먼지
+SCORE_FOOD = 3                   # 고지방/고당분
+SCORE_CIGARETTE = 5              # 담배
+SCORE_BOSS = 10                  # 보스
 
 # 처치 시 회복되는 산소포화도(SpO2)
-SPO2_GAIN_DUST = 1               # 먼지 처치 시 회복되는 SpO2 수치
-SPO2_GAIN_FOOD = 3               # 고지방/고당분 처치 시 회복되는 SpO2 수치 
-SPO2_GAIN_CIGARETTE = 5          # 담배 처치 시 회복되는 SpO2 수치
-SPO2_GAIN_BOSS = 10              # 보스 처치 시 회복되는 SpO2 수치
+SPO2_GAIN_DUST = 1               # 먼지
+SPO2_GAIN_FOOD = 3               # 고지방/고당분
+SPO2_GAIN_CIGARETTE = 5          # 담배
+SPO2_GAIN_BOSS = 10              # 보스
 
-# 플레이어(폐포) 아이템 획득 효과 설정
+# 플레이어(폐포 병사) 아이템 획득 효과 설정
 BROCCOLI_MAX_STACK = 30               # 브로콜리를 먹고 늘어날 수 있는 최대 병사 수
 ROW_CAPACITY = 10                     # 한 줄에 배치되는 최대 병사 수 (10명이 넘으면 윗줄로 쌓임)
-BROCCOLI_INSERT_OFFSET_RATIO = 0.33   # 병사(폐포)가 추가될 때 옆으로 겹쳐서 서는 간격 비율
+BROCCOLI_INSERT_OFFSET_RATIO = 0.33   # 기존 병사의 33%만큼 왼쪽으로 이동하여 새로운 병사 추가
 WATER_SPEED_GAIN = 1                  # 물을 먹었을 때 증가하는 플레이어 이동 속도
 
 # 네불라이저(필살기) 관련 설정
@@ -101,12 +88,25 @@ POPUP_LIFETIME_MS = 1000        # 데미지 숫자 팝업이 화면에 유지되
 POPUP_RISE_PER_MS = 0.06        # 데미지 숫자가 위로 올라가는 속도
 POPUP_ALPHA_DEC_PER_MS = 0.28   # 데미지 숫자가 서서히 투명해지는 속도
 
+# 플로팅 텍스트 및 적 체력바 관련 수치
+FLOAT_TEXT_LIFETIME_MS = 800     # 머리 위로 뜨는 텍스트(데미지 등)가 유지되는 시간 (밀리초)
+FLOAT_TEXT_RISE_SPEED = 0.05     # 머리 위로 뜨는 텍스트가 위로 올라가는 속도
+MINI_HP_BAR_W = 30               # 일반 적군(먼지, 음식 등) 미니 체력바의 가로 넓이
+MINI_HP_BAR_H = 6                # 일반 적군 미니 체력바의 세로 높이
+BOSS_HP_BAR_W = 200              # 보스 체력바의 가로 넓이
+BOSS_HP_BAR_H = 15               # 보스 체력바의 세로 높이
+ICON_SIZE = 32                   # 화면 상단 정보 UI(별, 시계, 산소)의 아이콘 크기
+
+# 시작화면 UI/레이아웃
+TITLE_NAME_Y_RATIO = 0.22         # 타이틀 화면의 게임 로고 Y축 위치 비율 (화면 상단 기준)
+TITLE_STARTBTN_Y_RATIO = 0.85     # 타이틀 화면의 시작 버튼 Y축 위치 비율 (화면 하단 기준)
+
 # =====================================================
 # PATH (파일 경로 설정)
 # =====================================================
-IMG_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\image\\"    # 이미지 파일 폴더 경로
-SOUND_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\sound\\"  # 사운드 파일 폴더 경로
-FONT_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\font\\"    # 폰트 파일 폴더 경로
+IMG_PATH = "E:\\python\\MedicalDA05_pygame-ver2-\\image\\"     # 이미지 파일 폴더 경로
+SOUND_PATH = "E:\\python\\MedicalDA05_pygame-ver2-\\sound\\"   # 사운드 파일 폴더 경로
+FONT_PATH = "E:\\python\\MedicalDA05_pygame-ver2-\\font\\"     # 폰트 파일 폴더 경로
 
 # =====================================================
 # 2. INIT / DISPLAY (Pygame 초기화 및 화면 크기 설정)
