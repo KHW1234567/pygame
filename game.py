@@ -23,7 +23,7 @@ BOSS_HP_BAR_W = 200              # 보스 체력바의 가로 넓이
 BOSS_HP_BAR_H = 15               # 보스 체력바의 세로 높이
 ICON_SIZE = 32                   # 화면 상단 정보 UI(별, 시계, 산소)의 아이콘 크기
 
-# - 스케일(이미지 크기 비율)
+# 스케일(이미지 크기 비율)
 SCALE_ALVEOLUS = 0.35         # 플레이어(폐포 병사) 이미지 배율
 SCALE_BULLET = 0.3            # 총알 이미지 배율
 SCALE_DUST = 0.3              # 먼지(적) 이미지 배율
@@ -32,10 +32,10 @@ SCALE_CIGARETTE = 0.7         # 담배(적) 이미지 배율
 SCALE_BOSS = 1.2              # 보스 이미지 배율
 SCALE_BROCCOLI = 0.3          # 브로콜리(아이템) 이미지 배율
 SCALE_WATER = 0.3             # 물(아이템) 이미지 배율
-NEBULIZER_SCALE = 0.15        # 네블라이저(필살기 아이템) 이미지 배율
-NEBULIZER_EFFECT_SCALE = 0.5  # 네블라이저 발동 시 화면에 뜨는 팝업 이펙트 이미지 배율
+NEBULIZER_SCALE = 0.15        # 네불라이저(필살기 아이템) 이미지 배율
+NEBULIZER_EFFECT_SCALE = 0.5  # 네불라이저 발동 시 화면에 뜨는 팝업 이펙트 이미지 배율
 
-# - 이동/속도
+# 이동/속도
 PLAYER_BASE_SPEED = 3         # 플레이어 좌우 이동 기본 속도
 BULLET_SPEED = 8              # 발사된 총알이 위로 날아가는 속도
 DUST_SPEED = 2.0              # 먼지가 떨어지는 속도
@@ -44,9 +44,9 @@ CIGARETTE_SPEED = 1.0         # 담배가 떨어지는 속도
 BOSS_SPEED = 1.2              # 보스가 떨어지는 속도
 BROCCOLI_SPEED = 2.5          # 브로콜리가 떨어지는 속도
 WATER_SPEED = 2.5             # 물이 떨어지는 속도
-NEBULIZER_SPEED = 2.0         # 네블라이저 아이템이 떨어지는 속도
+NEBULIZER_SPEED = 2.0         # 네불라이저 아이템이 떨어지는 속도
 
-# - 스폰(초 단위: 등장 주기)
+# 스폰 (초 단위: 등장 주기)
 DUST_SPAWN_INTERVAL = 0.15            # 먼지가 생성되는 간격 (초)
 FOOD_SPAWN_START = 10                 # 패스트푸드가 처음 등장하기 시작하는 시간 (10초 후)
 FOOD_SPAWN_INTERVAL = 1               # 패스트푸드가 생성되는 간격 (초)
@@ -54,13 +54,19 @@ CIGARETTE_SPAWN_START = 15            # 담배가 처음 등장하기 시작하�
 CIGARETTE_SPAWN_INTERVAL = 2          # 담배가 생성되는 간격 (초)
 BROCCOLI_SPAWN_INTERVAL = 2           # 브로콜리 아이템 생성 간격 (초)
 WATER_SPAWN_INTERVAL = 5              # 물 아이템 생성 간격 (초)
-NEBULIZER_SPAWN_TIMES = [18, 33, 48]  # 네블라이저가 떨어지는 특정 시간대(초) 리스트
+NEBULIZER_SPAWN_TIMES = [18, 33, 48]  # 네불라이저가 떨어지는 특정 시간대(초) 리스트
 
-# - HP/점수/조건
+# HP/점수/조건
 SPO2_START = 100                 # 게임 시작 시 초기 산소포화도(SpO2) 수치
-SPO2_DECAY_PER_SEC = 3.0         # 1초당 자연적으로 감소하는 산소포화도 수치
+SPO2_DECAY_PER_SEC = 3.5         # 1초당 자연적으로 감소하는 산소포화도 수치
 SPO2_WIN_THRESHOLD = 90          # 게임 클리어 시 승리(SUCCESS)로 인정되는 최소 산소포화도 수치
 TIME_LIMIT = 60                  # 한 판의 총 제한 시간 (초)
+
+# 보스 스폰 관련 (초 단위)
+BOSS_FIRST_DELAY = 20            # 게임 시작 후 보스가 최초로 등장하기까지 걸리는 시간
+BOSS_INTERVAL = 15               # 보스 연속 등장 간격 (초)
+BOSS_MAX_SPAWN = 3               # 한 게임당 등장할 수 있는 보스의 최대 횟수
+BOSS_WARNING_SEC = 3             # 보스 등장 전 경고창(Warning)이 화면에 유지되는 시간
 
 # 적 체력 설정
 DUST_HP = 1                      # 먼지 체력
@@ -80,26 +86,20 @@ SPO2_GAIN_FOOD = 3               # 고지방/고당분 처치 시 회복되는 S
 SPO2_GAIN_CIGARETTE = 5          # 담배 처치 시 회복되는 SpO2 수치
 SPO2_GAIN_BOSS = 10              # 보스 처치 시 회복되는 SpO2 수치
 
-# 플레이어(병사) 부대 설정
+# 플레이어(폐포) 아이템 획득 효과 설정
 BROCCOLI_MAX_STACK = 30               # 브로콜리를 먹고 늘어날 수 있는 최대 병사 수
 ROW_CAPACITY = 10                     # 한 줄에 배치되는 최대 병사 수 (10명이 넘으면 윗줄로 쌓임)
-BROCCOLI_INSERT_OFFSET_RATIO = 0.33   # 병사가 추가될 때 옆으로 겹쳐서 서는 간격 비율
+BROCCOLI_INSERT_OFFSET_RATIO = 0.33   # 병사(폐포)가 추가될 때 옆으로 겹쳐서 서는 간격 비율
 WATER_SPEED_GAIN = 1                  # 물을 먹었을 때 증가하는 플레이어 이동 속도
 
-# - 보스 스폰 관련 (초 단위)
-BOSS_FIRST_DELAY = 20            # 게임 시작 후 보스가 최초로 등장하기까지 걸리는 시간
-BOSS_INTERVAL = 15               # 보스 연속 등장 간격 (초)
-BOSS_MAX_SPAWN = 3               # 한 게임당 등장할 수 있는 보스의 최대 횟수
-BOSS_WARNING_SEC = 3             # 보스 등장 전 경고창(Warning)이 화면에 유지되는 시간
+# 네불라이저(필살기) 관련 설정
+NEBULIZER_ALL_ENEMY_HP_DEC = 5        # 네불라이저 획득 시 모든 적의 체력을 깎는 수치
+NEBULIZER_EFFECT_DURATION_MS = 1000   # 네불라이저 화면 플래시 이펙트 유지 시간 (밀리초)
 
-# - 네블라이저(필살기) 관련 설정
-NEBULIZER_ALL_ENEMY_HP_DEC = 5        # 네블라이저 획득 시 모든 적의 체력을 깎는 수치
-NEBULIZER_EFFECT_DURATION_MS = 1000   # 네블라이저 화면 플래시 이펙트 유지 시간 (밀리초)
-
-# - 데미지 팝업 관련 설정
-POPUP_LIFETIME_MS = 1000         # 데미지 숫자 팝업이 화면에 유지되는 시간 (밀리초)
-POPUP_RISE_PER_MS = 0.06         # 데미지 숫자가 위로 올라가는 속도
-POPUP_ALPHA_DEC_PER_MS = 0.28    # 데미지 숫자가 서서히 투명해지는 속도
+# 필살기 효과로 적에게 입히는 피해량을 숫자로 보여주는 팝업 관련 설정
+POPUP_LIFETIME_MS = 1000        # 데미지 숫자 팝업이 화면에 유지되는 시간 (밀리초)
+POPUP_RISE_PER_MS = 0.06        # 데미지 숫자가 위로 올라가는 속도
+POPUP_ALPHA_DEC_PER_MS = 0.28   # 데미지 숫자가 서서히 투명해지는 속도
 
 # =====================================================
 # PATH (파일 경로 설정)
@@ -185,7 +185,7 @@ img_broc = load_img(IMG_PATH+"broccoli.png", SCALE_BROCCOLI)
 img_water = load_img(IMG_PATH+"water.png", SCALE_WATER)
 img_neb = load_img(IMG_PATH+"nebulizer.png", NEBULIZER_SCALE)
 
-# 네블라이저 아이템 이미지가 화면 절반을 넘어갈 경우 강제로 축소 처리
+# 네불라이저 아이템 이미지가 화면 절반을 넘어갈 경우 강제로 축소 처리
 if img_neb.get_width() > BASE_WIDTH//2 - 20: 
     img_neb = pygame.transform.rotozoom(img_neb, 0, (BASE_WIDTH//2-20)/img_neb.get_width())
 
@@ -297,8 +297,8 @@ def reset_game():
     
     # 아이템 및 UI 이펙트 관련 리스트
     itm_list = {'broc':[], 'water':[]} # 브로콜리와 물방울 좌표
-    f_txts, dmg_pops = [], []          # 떠오르는 텍스트, 네블라이저 발동 시 데미지 팝업
-    neb_data = {'list':[], 'times':set(), 'on':False, 't_on':0} # 네블라이저 아이템 추적 및 화면 이펙트 지속시간 관리
+    f_txts, dmg_pops = [], []          # 떠오르는 텍스트, 네불라이저 발동 시 데미지 팝업
+    neb_data = {'list':[], 'times':set(), 'on':False, 't_on':0} # 네불라이저 아이템 추적 및 화면 이펙트 지속시간 관리
 
     # 게임 진행 및 결과 플래그
     is_over, is_succ, score = False, False, 0
@@ -429,7 +429,7 @@ while play:
                 t_spawn['water'] = int(sec)
                 itm_list['water'].append([get_non_overlap_x(all_i, w_w, BASE_WIDTH//2, BASE_WIDTH-w_w, 40), 0])
             
-            # 네블라이저 스폰 처리 (정해진 시간에 맞춰 단 한 번씩만 스폰되도록 times 셋 활용)
+            # 네불라이저 스폰 처리 (정해진 시간에 맞춰 단 한 번씩만 스폰되도록 times 셋 활용)
             for t in NEBULIZER_SPAWN_TIMES:
                 if sec >= t and t not in neb_data['times']:
                     neb_data['times'].add(t)
@@ -511,7 +511,7 @@ while play:
                                 m_spd += WATER_SPEED_GAIN
                             break # 충돌 처리 후 반복 종료
 
-            # --- 필살기 네블라이저 처리 ---
+            # --- 필살기 네불라이저 처리 ---
             for neb in neb_data['list'][:]:
                 neb[1] += NEBULIZER_SPEED; background.blit(img_neb, (neb[0], neb[1]))
                 if neb[1] >= BASE_HEIGHT - h_n: neb_data['list'].remove(neb); continue
@@ -589,14 +589,14 @@ while play:
                 if img_warn_boss: background.blit(img_warn_boss, img_warn_boss.get_rect(center=(BASE_WIDTH/2, BASE_HEIGHT/2-200)))
                 else: txt = font_bg.render("BOSS WARNING !!!", True, (255,255,0)); background.blit(txt, (BASE_WIDTH/2-txt.get_width()/2, BASE_HEIGHT/2-200))
 
-        # 네블라이저 발동 시 푸른색 화면 플래시 연출
+        # 네불라이저 발동 시 푸른색 화면 플래시 연출
         if neb_data['on']:
             if ct - neb_data['t_on'] > NEBULIZER_EFFECT_DURATION_MS: neb_data['on'] = False
             else:
                 fl = pygame.Surface((BASE_WIDTH, BASE_HEIGHT)); fl.set_alpha(90); fl.fill((0,220,255)); background.blit(fl, (0,0))
                 if img_neb_effect: background.blit(img_neb_effect, img_neb_effect.get_rect(center=(BASE_WIDTH/2, 400)))
 
-        # 네블라이저 데미지 팝업 애니메이션 
+        # 네불라이저 데미지 팝업 애니메이션 
         for d in dmg_pops[:]:
             dt = ct - d[2]
             if dt > POPUP_LIFETIME_MS: dmg_pops.remove(d); continue
