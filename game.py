@@ -104,9 +104,9 @@ POPUP_ALPHA_DEC_PER_MS = 0.28    # 데미지 숫자가 서서히 투명해지는
 # =====================================================
 # PATH (파일 경로 설정)
 # =====================================================
-IMG_PATH = "E:\\python\\MedicalDA05_pygame-ver2-\\image\\"    # 이미지 파일 폴더 경로
-SOUND_PATH = "E:\\python\\MedicalDA05_pygame-ver2-\\sound\\"  # 사운드 파일 폴더 경로
-FONT_PATH = "E:\\python\\MedicalDA05_pygame-ver2-\\font\\"    # 폰트 파일 폴더 경로
+IMG_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\image\\"    # 이미지 파일 폴더 경로
+SOUND_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\sound\\"  # 사운드 파일 폴더 경로
+FONT_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\font\\"    # 폰트 파일 폴더 경로
 
 # =====================================================
 # 2. INIT / DISPLAY (Pygame 초기화 및 화면 크기 설정)
@@ -227,8 +227,12 @@ try:
     font_bg = pygame.font.Font(os.path.join(FONT_PATH, "Bazzi.ttf"), 50)
     font_ui = pygame.font.Font(os.path.join(FONT_PATH, "Bazzi.ttf"), 34)
 except:
-    font_sm, font_bg, font_ui = [pygame.font.SysFont("arial", s, bold=True) for s in (28, 50, 34)]
-font_title = pygame.font.SysFont("impact", 90, bold=True)
+    print("커스텀 폰트를 찾을 수 없습니다. 기본 폰트로 실행합니다.")
+    font_sm = pygame.font.SysFont("arial", 28, bold=True)
+    font_bg = pygame.font.SysFont("arial", 50, bold=True)
+    font_ui = pygame.font.SysFont("arial", 34, bold=True)
+
+font_title = pygame.font.SysFont("impact", 90, bold=True) 
 
 # =====================================================
 # 4. UTILS (보조 함수들: 겹침 방지, UI 렌더링)
@@ -603,6 +607,11 @@ while play:
         # 게임 종료 결과 화면 (검은색 반투명 패널 및 최종 점수 안내)
         # ------------------
         if is_over or is_succ:
+            
+            # [수정: 게임 실패(오버) 시 결과창에 표시되는 SpO2 수치와 게이지를 0%로 강제 고정.]
+            if is_over:
+                spo2 = 0
+                
             if not snd_end: # 1회만 음악 멈추고 효과음 재생
                 pygame.mixer.music.stop(); (sfx_succ.play() if is_succ and sfx_succ else sfx_fail.play() if sfx_fail else None); snd_end = True
             
