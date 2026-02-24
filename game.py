@@ -315,25 +315,25 @@ reset_game()   # 프로그램 실행 시 최초 한 번 초기화 진행
 play, is_run, intro_idx = True, False, 0
 
 while play:
-    clock.tick(FPS)      # 설정된 FPS 값에 맞게 루프 속도 제어
-    sh_x, sh_y = 0, 0    # 화면 흔들림(shake) 변수 매 프레임 초기화
+    clock.tick(FPS)     # 설정된 FPS 값에 맞게 루프 속도 제어
+    sh_x, sh_y = 0, 0   # 화면 흔들림(shake) 변수 매 프레임 초기화
 
     # 키보드 및 마우스 이벤트 감지
     for ev in pygame.event.get():
-        if ev.type == pygame.QUIT: play = False # 창의 X 버튼을 누르면 루프 종료
+        if ev.type == pygame.QUIT: play = False   # 창의 X 버튼을 누르면 루프 종료
         
         # [시작 화면] 시작 버튼 클릭 감지
         if game_state == STATE_START and ev.type == pygame.MOUSEBUTTONDOWN:
-            mx, my = ev.pos[0]/scale_ratio, ev.pos[1]/scale_ratio # 모니터 배율에 맞게 클릭 좌표 보정
-            if rect_btn_start.collidepoint(mx, my): # 마우스 위치가 버튼 사각형 영역 안에 있는지 확인
+            mx, my = ev.pos[0]/scale_ratio, ev.pos[1]/scale_ratio   # 모니터 배율에 맞게 클릭 좌표 보정
+            if rect_btn_start.collidepoint(mx, my):      # 마우스 위치가 버튼 사각형 영역 안에 있는지 확인
                 if sfx_button: sfx_button.play()
-                intro_idx, game_state = 0, STATE_INTRO # 스토리 인트로 화면으로 상태 전환
+                intro_idx, game_state = 0, STATE_INTRO   # 스토리 인트로 화면으로 상태 전환
 
         # [스토리 인트로 화면] 스페이스바 입력 감지
         elif game_state == STATE_INTRO and ev.type == pygame.KEYDOWN and ev.key == pygame.K_SPACE:
             if sfx_button: sfx_button.play()
-            intro_idx += 1 # 스페이스바 누를 때마다 다음 스토리 이미지로 인덱스 증가
-            if intro_idx >= len(intro_images): game_state = STATE_READY # 스토리가 끝나면 준비 화면으로
+            intro_idx += 1   # 스페이스바 누를 때마다 다음 스토리 이미지로 인덱스 증가
+            if intro_idx >= len(intro_images): game_state = STATE_READY   # 스토리가 끝나면 준비 화면으로
 
         # [준비 화면] 플레이 버튼 클릭 감지
         elif game_state == STATE_READY and ev.type == pygame.MOUSEBUTTONDOWN:
@@ -341,33 +341,33 @@ while play:
             if rect_ready_start.collidepoint(mx, my):
                 if sfx_button: sfx_button.play()
                 if sfx_start: sfx_start.play()
-                is_run, t_start = True, pygame.time.get_ticks() # 본격적인 게임 타이머 시작
-                pygame.mixer.music.load(SOUND_PATH+"배경음2.mp3"); pygame.mixer.music.play(-1) # 인게임 브금 변경
-                game_state = STATE_GAME # 게임 상태 전환
+                is_run, t_start = True, pygame.time.get_ticks()   # 본격적인 게임 타이머 시작
+                pygame.mixer.music.load(SOUND_PATH+"배경음2.mp3"); pygame.mixer.music.play(-1)   # 인게임 브금 변경
+                game_state = STATE_GAME   # 게임 상태 전환
 
         # [본 게임 및 결과 화면] 입력 감지
         elif game_state == STATE_GAME:
             # 게임 종료 상태(성공/실패)일 때 마우스 클릭 처리
             if (is_over or is_success) and ev.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = ev.pos[0]/scale_ratio, ev.pos[1]/scale_ratio
-                if rect_btn_retry.collidepoint(mx, my): # 다시하기 버튼
+                if rect_btn_retry.collidepoint(mx, my):   # 다시하기 버튼
                     if sfx_button: sfx_button.play()
                     reset_game(); is_run, t_start = True, pygame.time.get_ticks()
                     pygame.mixer.music.load(SOUND_PATH+"배경음2.mp3"); pygame.mixer.music.play(-1)
-                if rect_btn_quit.collidepoint(mx, my):  # 종료 버튼
+                if rect_btn_quit.collidepoint(mx, my):    # 종료 버튼
                     if sfx_button: sfx_button.play()
                     play = False
             # 게임 진행 중일 때 키보드 조작 처리
             elif is_run and not is_over and not is_success:
                 if ev.type == pygame.KEYDOWN:
-                    if ev.key == pygame.K_RIGHT: to_x = move_speed  # 우측 이동 속도 할당
-                    elif ev.key == pygame.K_LEFT: to_x = -move_speed # 좌측 이동 속도 할당
-                    elif ev.key == pygame.K_SPACE:              # 스페이스바 누를 때 총알 발사
+                    if ev.key == pygame.K_RIGHT: to_x = move_speed     # 우측 이동 속도 할당
+                    elif ev.key == pygame.K_LEFT: to_x = -move_speed   # 좌측 이동 속도 할당
+                    elif ev.key == pygame.K_SPACE:                     # 스페이스바 누를 때 총알 발사
                         if sfx_shoot: sfx_shoot.play()
                         # 현재 화면에 있는 모든 병사(p)의 위치에서 총알 객체 생성
                         for p in p_list: bullet_list.append([p[0]+w_p/2-w_b/2, p[1]])
                 elif ev.type == pygame.KEYUP and ev.key in (pygame.K_RIGHT, pygame.K_LEFT): 
-                    to_x = 0 # 방향키에서 손을 떼면 이동 정지
+                    to_x = 0   # 방향키에서 손을 떼면 이동 정지
 
     # 상태별 배경화면 렌더링
     if game_state == STATE_START:
@@ -381,37 +381,37 @@ while play:
     # 메인 게임 로직
     # ------------------
     elif game_state == STATE_GAME:
-        background.blit(img_bg, (0,0)) # 인게임 맵 배경 깔기
+        background.blit(img_bg, (0,0))   # 인게임 맵 배경 깔기
         
         # 게임이 실행 중이고 끝나지 않았을 때 프레임 연산
         if is_run and not is_over and not is_success:
-            sec = (pygame.time.get_ticks() - t_start) / 1000 # 진행된 시간(초) 계산
-            t_left = max(0, int(TIME_LIMIT - sec))           # 남은 시간 표시용 연산
-            spo2 -= SPO2_DECAY_PER_SEC * (clock.get_time() / 1000) # 매 프레임 시간만큼 SpO2 감소
+            sec = (pygame.time.get_ticks() - t_start) / 1000         # 진행된 시간(초) 계산
+            t_left = max(0, int(TIME_LIMIT - sec))                   # 남은 시간 표시용 연산
+            spo2 -= SPO2_DECAY_PER_SEC * (clock.get_time() / 1000)   # 매 프레임 시간만큼 SpO2 감소
             
             # 게임 오버 및 클리어 판정
-            if spo2 <= 0: spo2, is_over = 0, True # 산소 0이면 즉시 실패
-            if sec >= TIME_LIMIT:                 # 제한 시간이 다 끝났을 때
-                if spo2 >= SPO2_WIN_THRESHOLD: is_success = True # 90% 이상 유지했으면 성공
-                else: is_over = True                          # 미만이면 실패
+            if spo2 <= 0: spo2, is_over = 0, True   # 산소 0이면 즉시 실패
+            if sec >= TIME_LIMIT:                   # 제한 시간이 다 끝났을 때
+                if spo2 >= SPO2_WIN_THRESHOLD: is_success = True   # 90% 이상 유지했으면 성공
+                else: is_over = True                               # 미만이면 실패
 
             # --- 스폰 관리 로직 ---
-            all_e = e_list['dust'] + e_list['cig'] + e_list['food'] # 생성된 적 전체 리스트 병합 (위치 겹침 확인용)
+            all_e = e_list['dust'] + e_list['cig'] + e_list['food']   # 생성된 적 전체 리스트 병합 (위치 겹침 확인용)
             
             # 먼지 스폰 주기 체크 및 생성
             if sec - t_spawn['dust'] >= DUST_SPAWN_INTERVAL:
                 t_spawn['dust'] = sec; e_list['dust'].append([get_non_overlap_x(all_e, w_d), 0, DUST_HP])
-            # 패스트푸드 등장 조건(시작 후 특정 시간 지남) 및 주기 체크 생성
+            # 고지방/고당분 등장 조건(시작 후 특정 시간 지남) 및 주기 체크 생성
             if sec >= FOOD_SPAWN_START and int(sec) - t_spawn['food'] >= FOOD_SPAWN_INTERVAL:
                 t_spawn['food'] = int(sec); e_list['food'].append([get_non_overlap_x(all_e, w_f), 0, FOOD_HP])
-            # 담배 등장 조건 및 주기 체크 생성
+            # 담배 등장 조건(시작 후 특정 시간 지남) 및 주기 체크 생성
             if sec >= CIGARETTE_SPAWN_START and int(sec) - t_spawn['cig'] >= CIGARETTE_SPAWN_INTERVAL:
                 t_spawn['cig'] = int(sec); e_list['cig'].append([get_non_overlap_x(all_e, w_c), 0, CIGARETTE_HP])
             
             # 보스 등장 조건 검사 (생존한 보스가 없고, 대기열에 보스가 남았으며, 지정된 시간이 지났을 때)
             if (not boss_data['alive'] and boss_data['imgs'] and boss_data['cnt'] < BOSS_MAX_SPAWN 
                 and int(sec)-boss_data['t_last'] >= BOSS_INTERVAL and sec >= BOSS_FIRST_DELAY):
-                if sfx_boss_warning: sfx_boss_warning.play() # 경고음 재생
+                if sfx_boss_warning: sfx_boss_warning.play()   # 경고음 재생
                 # 보스 상태 활성화 및 데이터 갱신
                 boss_data.update({'alive':True, 'warn':True, 't_warn':pygame.time.get_ticks(), 't_last':int(sec), 
                                   'x':random.randrange(0, BASE_WIDTH//2-w_boss), 'y':0, 'hp':BOSS_HP})
@@ -428,7 +428,7 @@ while play:
                 t_spawn['water'] = int(sec)
                 itm_list['water'].append([get_non_overlap_x(all_i, w_w, BASE_WIDTH//2, BASE_WIDTH-w_w, 40), 0])
             
-            # 네불라이저 스폰 처리 (정해진 시간에 맞춰 단 한 번씩만 스폰되도록 times 셋 활용)
+            # 네불라이저 스폰 처리
             for t in NEBULIZER_SPAWN_TIMES:
                 if sec >= t and t not in neb_data['times']:
                     neb_data['times'].add(t)
@@ -436,9 +436,9 @@ while play:
                     neb_data['list'].append([mx if my<=mx else random.randrange(mx, my), 0])
 
             # --- 플레이어(병사) 이동 및 이탈 방지 처리 ---
-            for p in p_list: p[0] += to_x # 모든 병사 좌표 이동 적용
+            for p in p_list: p[0] += to_x   # 모든 병사 좌표 이동 적용
             
-            if p_list: # 리스트에 병사가 존재하면
+            if p_list:   # 리스트에 병사가 존재하면
                 # 제일 왼쪽에 있는 병사가 화면 밖(0 미만)으로 나갔을 때 위치 보정
                 if (mx := min(p[0] for p in p_list)) < 0:
                     for p in p_list: p[0] -= mx 
@@ -446,28 +446,28 @@ while play:
                 if (mx := max(p[0] for p in p_list)) > BASE_WIDTH - w_p:
                     for p in p_list: p[0] -= (mx - (BASE_WIDTH - w_p))
 
-            # --- 일반 적(먼지/음식/담배) 물리 처리 (이동, 렌더링, 플레이어 충돌) ---
+            # --- 몬스터(먼지, 고지방/고당분, 담배) 물리 처리 (이동, 렌더링, 플레이어 충돌) ---
             # 각 적군 속성을 튜플 리스트로 묶어 코드 반복을 줄임
             e_info = [('dust', img_dust, w_d, h_d, DUST_SPEED, DUST_HP, SCORE_DUST, SPO2_GAIN_DUST),
                       ('food', img_food, w_f, h_f, FOOD_SPEED, FOOD_HP, SCORE_FOOD, SPO2_GAIN_FOOD),
                       ('cig', img_cigarette, w_c, h_c, CIGARETTE_SPEED, CIGARETTE_HP, SCORE_CIGARETTE, SPO2_GAIN_CIGARETTE)]
             
             for key, img, w, h, spd, mhp, sc, s_gn in e_info:
-                for e in e_list[key][:]: # 복사본[:]을 순회하며 원본 리스트를 안전하게 삭제
-                    e[1] += spd; background.blit(img, (e[0], e[1])) # 위치 증가 후 그리기
-                    draw_hp(background, e[0]+w/2-MINI_HP_BAR_W/2, e[1]-12, e[2], mhp) # 체력바 그리기
+                for e in e_list[key][:]:   # 복사본[:]을 순회하며 원본 리스트를 안전하게 삭제
+                    e[1] += spd; background.blit(img, (e[0], e[1]))   # 위치 증가 후 그리기
+                    draw_hp(background, e[0]+w/2-MINI_HP_BAR_W/2, e[1]-12, e[2], mhp)   # 체력바 그리기
                     
-                    hit = False; rect = pygame.Rect(e[0], e[1], w, h) # 적군 히트박스 생성
-                    for p in p_list[:]: # 병사들과의 충돌 검사
-                        if rect.colliderect(pygame.Rect(p[0], p[1], w_p, h_p)): # 겹쳤을 경우
-                            p_list.remove(p); hit = True # 병사 삭제
-                            if sfx_die: sfx_die.play()   # 병사 사망 효과음 재생
-                            if e in e_list[key]: e_list[key].remove(e) # 적도 함께 삭제(자폭)
-                            break # 한 프레임에 하나의 병사만 피해 입도록 반복 종료
+                    hit = False; rect = pygame.Rect(e[0], e[1], w, h)   # 적군 히트박스 생성
+                    for p in p_list[:]:   # 병사들과의 충돌 검사
+                        if rect.colliderect(pygame.Rect(p[0], p[1], w_p, h_p)):   # 겹쳤을 경우
+                            p_list.remove(p); hit = True   # 병사(폐포) 삭제
+                            if sfx_die: sfx_die.play()     # 병사(폐포) 사망 효과음 재생
+                            if e in e_list[key]: e_list[key].remove(e)   # 적도 함께 삭제(자폭)
+                            break   # 반복 종료: 한 프레임에 하나의 병사만 피해
                     if hit:
-                        if not p_list: is_over = True # 병사가 다 죽었으면 게임 오버
-                        continue # 이 적군은 이미 파괴되었으므로 아래 코드 건너뜀
-                    if e[1] >= BASE_HEIGHT - h: is_over = True # 적이 화면 바닥에 닿으면 게임 오버
+                        if not p_list: is_over = True   # 병사가 다 죽었으면 게임 오버
+                        continue   # 이 적군은 이미 파괴되었으므로 아래 코드 건너뜀
+                    if e[1] >= BASE_HEIGHT - h: is_over = True   # 적군이 화면 바닥에 닿으면 게임 오버
 
             # --- 보스 이동 및 물리 처리 ---
             if boss_data['alive']:
@@ -476,26 +476,26 @@ while play:
                 rect = pygame.Rect(boss_data['x'], boss_data['y'], w_boss, h_boss)
                 for p in p_list[:]:
                     if rect.colliderect(pygame.Rect(p[0], p[1], w_p, h_p)):
-                        p_list.remove(p) # 보스와 닿으면 병사 1명 증발
+                        p_list.remove(p)   # 보스와 닿으면 병사 1명 증발
                         if sfx_die: sfx_die.play()
-                        boss_data['hp'] -= 5 # 보스는 한 번에 죽지 않고 체력만 감소
-                        if boss_data['hp'] <= 0: # 체력이 0 이하면 보스 처치 판정
+                        boss_data['hp'] -= 5       # 보스는 한 번에 죽지 않고 체력만 감소
+                        if boss_data['hp'] <= 0:   # 체력이 0 이하면 보스 처치 판정
                             boss_data['alive'] = False; score += SCORE_BOSS; spo2 = min(100, spo2 + SPO2_GAIN_BOSS)
                         break
-                if not p_list or boss_data['y'] >= BASE_HEIGHT - h_boss: is_over = True # 병사 전멸이거나 보스가 바닥 도달 시 오버
+                if not p_list or boss_data['y'] >= BASE_HEIGHT - h_boss: is_over = True   # 병사 전멸 또는 보스 바닥 도달 시 실패
 
             # --- 아이템(브로콜리, 물) 이동 및 획득 처리 ---
             i_info = [('broc', img_broccoli, w_broc, h_broc, BROCCOLI_SPEED), ('water', img_water, w_w, h_w, WATER_SPEED)]
             for key, img, w, h, spd in i_info:
                 for i in itm_list[key][:]:
                     i[1] += spd; background.blit(img, (i[0], i[1]))
-                    if i[1] >= BASE_HEIGHT - h: itm_list[key].remove(i); continue # 바닥에 닿은 아이템 지우기
+                    if i[1] >= BASE_HEIGHT - h: itm_list[key].remove(i); continue   # 바닥에 닿은 아이템 지우기
                     
-                    for p in p_list: # 아이템과 병사 충돌 확인
+                    for p in p_list:   # 아이템과 병사 충돌 확인
                         if pygame.Rect(i[0], i[1], w, h).colliderect(pygame.Rect(p[0], p[1], w_p, h_p)):
                             if sfx_item: sfx_item.play()
-                            itm_list[key].remove(i) # 획득한 아이템 삭제
-                            if key == 'broc': # 브로콜리 획득 시 병사 수 증가 및 자리 재배치
+                            itm_list[key].remove(i)   # 획득한 아이템 삭제
+                            if key == 'broc':   # 브로콜리 획득 시 병사 수 증가 및 자리 재배치
                                 f_txts.append([p[0], p[1], "Squad +1", (0, 255, 50), pygame.time.get_ticks()])
                                 if len(p_list) < BROCCOLI_MAX_STACK:
                                     ox, oy = w_p*BROCCOLI_INSERT_OFFSET_RATIO, h_p*0.6
@@ -505,10 +505,10 @@ while play:
                                     else: 
                                         # 평소에는 왼쪽으로 계속 이어붙이기
                                         p_list.insert(0, [p_list[0][0]-ox, p_list[0][1]])
-                            elif key == 'water': # 물 획득 시 이동 속도 증가
+                            elif key == 'water':   # 물 획득 시 이동 속도 증가
                                 f_txts.append([p[0], p[1], "Speed UP!", (0, 200, 255), pygame.time.get_ticks()])
                                 move_speed += WATER_SPEED_GAIN
-                            break # 충돌 처리 후 반복 종료
+                            break   # 충돌 처리 후 반복 종료
 
             # --- 필살기 네불라이저 처리 ---
             for neb in neb_data['list'][:]:
@@ -521,13 +521,13 @@ while play:
                     if sfx_nebulizer: sfx_nebulizer.play()
                     # 병사 머리 위에 데미지 알림 팝업 추가
                     f_txts.append([p_list[0][0], p_list[0][1], "DAMAGE ALL -5", (0,220,255), pygame.time.get_ticks()])
-                    neb_data['list'].remove(neb); neb_data.update({'on':True, 't_on':pygame.time.get_ticks()}) # 획득 시 플래시 효과 발동
+                    neb_data['list'].remove(neb); neb_data.update({'on':True, 't_on':pygame.time.get_ticks()})   # 획득 시 플래시 효과 발동
                     
-                    # 화면에 있는 모든 적의 체력을 5 감소
+                    # 화면에 있는 모든 적의 체력 5 감소
                     for k,_,w,_,_,_,sc,sgn in e_info:
                         for e in e_list[k][:]:
-                            e[2] -= NEBULIZER_ALL_ENEMY_HP_DEC; dmg_pops.append((e[0]+w//2, e[1], pygame.time.get_ticks())) # 데미지 숫자 이펙트 추가
-                            if e[2] <= 0: e_list[k].remove(e); score += sc; spo2 = min(100, spo2 + sgn) # 체력 0 이하면 파괴 처리
+                            e[2] -= NEBULIZER_ALL_ENEMY_HP_DEC; dmg_pops.append((e[0]+w//2, e[1], pygame.time.get_ticks()))   # 데미지 숫자 이펙트 추가
+                            if e[2] <= 0: e_list[k].remove(e); score += sc; spo2 = min(100, spo2 + sgn)   # 체력 0 이하면 파괴 처리
                     if boss_data['alive']:
                         boss_data['hp'] -= NEBULIZER_ALL_ENEMY_HP_DEC; dmg_pops.append((boss_data['x']+w_boss//2, boss_data['y'], pygame.time.get_ticks()))
                         if boss_data['hp'] <= 0: boss_data['alive'] = False; score += SCORE_BOSS; spo2 = min(100, spo2 + SPO2_GAIN_BOSS)
@@ -535,14 +535,14 @@ while play:
             # --- 발사된 총알 물리 처리 ---
             for b in bullet_list[:]:
                 b[1] -= BULLET_SPEED; background.blit(img_bullet, (b[0], b[1]))
-                if b[1] <= 0: bullet_list.remove(b); continue # 화면 밖을 벗어난 총알 삭제
+                if b[1] <= 0: bullet_list.remove(b); continue   # 화면 밖을 벗어난 총알 삭제
                 
                 hit = False
                 # 총알의 좌표를 일반 적들의 박스 좌표와 비교하여 명중 확인
                 for k,_,w,h,_,_,sc,sgn in e_info:
                     for e in e_list[k][:]:
                         if e[0] < b[0] < e[0]+w and e[1] < b[1] < e[1]+h:
-                            e[2]-=1; bullet_list.remove(b); hit=True # 적 체력 감소 후 총알 파괴
+                            e[2]-=1; bullet_list.remove(b); hit=True   # 적 체력 감소 후 총알 파괴
                             if e[2]<=0: e_list[k].remove(e); score+=sc; spo2 = min(100, spo2+sgn)
                             break
                     if hit: break
@@ -568,22 +568,22 @@ while play:
 
         ct = pygame.time.get_ticks()
         
-        # 아이템 획득 등의 플로팅 텍스트 애니메이션 계산 (서서히 사라지고 위로 상승)
+        # 플로팅 텍스트 애니메이션 계산 (위로 상승하면서 서서히 사라짐)
         for f in f_txts[:]:
             dt = ct - f[4]
             if dt > FLOAT_TEXT_LIFETIME_MS: f_txts.remove(f); continue
-            f[1] -= FLOAT_TEXT_RISE_SPEED * clock.get_time() # Y좌표 지속 차감
+            f[1] -= FLOAT_TEXT_RISE_SPEED * clock.get_time()   # Y좌표 지속 차감
             ts = font_ui.render(f[2], True, f[3]); a_surf = pygame.Surface(ts.get_size(), pygame.SRCALPHA)
-            a_surf.blit(ts, (0,0)); a_surf.set_alpha(max(0, 255 - int((dt/FLOAT_TEXT_LIFETIME_MS)*255))) # 알파값 계산
+            a_surf.blit(ts, (0,0)); a_surf.set_alpha(max(0, 255 - int((dt/FLOAT_TEXT_LIFETIME_MS)*255)))   # 알파값 계산
             background.blit(a_surf, (f[0]+w_p/2-ts.get_width()/2, f[1]-40))
 
-        # 보스 등장 시 화면 붉은 플래시 및 경고 이미지(텍스트) 흔들림(shake) 연출
+        # 보스 등장 시 화면 붉은 플래시 및 경고 이미지 흔들림(shake) 연출
         if boss_data['warn']:
             el = (ct - boss_data['t_warn']) / 1000
-            if el > BOSS_WARNING_SEC: boss_data['warn'] = False # 시간이 지나면 경고 연출 종료
+            if el > BOSS_WARNING_SEC: boss_data['warn'] = False   # 시간이 지나면 경고 연출 종료
             else:
                 sh_x, sh_y = random.randint(-2,2), random.randint(-2,2)
-                if int(el*6)%2 == 0: # 1초에 3번 깜빡이는 붉은 플래시 효과
+                if int(el*6)%2 == 0:   # 1초에 3번 깜빡이는 붉은 플래시 효과
                     fl = pygame.Surface((BASE_WIDTH, BASE_HEIGHT)); fl.set_alpha(100); fl.fill((255,0,0)); background.blit(fl, (0,0))
                 if img_warning_boss: background.blit(img_warning_boss, img_warning_boss.get_rect(center=(BASE_WIDTH/2, BASE_HEIGHT/2-200)))
                 else: txt = font_bg.render("BOSS WARNING !!!", True, (255,255,0)); background.blit(txt, (BASE_WIDTH/2-txt.get_width()/2, BASE_HEIGHT/2-200))
@@ -603,11 +603,11 @@ while play:
             background.blit(ts, (d[0]-ts.get_width()/2, (d[1]-30) - dt*POPUP_RISE_PER_MS))
 
         # ------------------
-        # 게임 종료 결과 화면 (검은색 반투명 패널 및 최종 점수 안내)
+        # 게임 종료 결과 화면
         # ------------------
         if is_over or is_success:
             
-            if not sound_end: # 1회만 음악 멈추고 효과음 재생
+            if not sound_end:   # 1회만 음악 멈추고 효과음 재생
                 pygame.mixer.music.stop(); (sfx_success.play() if is_success and sfx_success else sfx_fail.play() if sfx_fail else None); sound_end = True
             
             # 성공/실패 배경 렌더링
@@ -621,7 +621,7 @@ while play:
             # 타이틀(성공/실패 이미지) 삽입
             tit = img_title_success if is_success else img_title_gameover
             if tit: background.blit(tit, tit.get_rect(center=(BASE_WIDTH//2, by+80)))
-            else: draw_txt(background, "SUCCESS!" if is_success else "GAME OVER", font_title, (100,255,100) if is_success else (255,80,80), (0,0,0), BASE_WIDTH//2-font_title.size("SUCCESS!" if is_succ else "GAME OVER")[0]//2, by+20)
+            else: draw_txt(background, "SUCCESS!" if is_success else "GAME OVER", font_title, (100,255,100) if is_success else (255,80,80), (0,0,0), BASE_WIDTH//2-font_title.size("SUCCESS!" if is_success else "GAME OVER")[0]//2, by+20)
             
             # 최종 점수 삽입
             sc_lbl = f"FINAL SCORE :  {score}"
