@@ -564,7 +564,7 @@ while play:
         background.blit(img_icon_star, (20,20)); draw_txt(background, f"{score}", font_ui, (255,215,0), (80,50,0), 20+ICON_SIZE+10, 20)
         background.blit(img_icon_time, (BASE_WIDTH//2-50,20)); draw_txt(background, f"{t_left if 't_left' in locals() else TIME_LIMIT}", font_ui, (255,255,255), (50,50,50), BASE_WIDTH//2-50+ICON_SIZE+10, 20)
         draw_bar(background, BASE_WIDTH//2-200, 65, 400, 24, spo2/100.0, (0,200,100) if spo2>=SPO2_WIN_THRESHOLD else (255,80,80))
-        background.blit(img_icon_spo2, (BASE_WIDTH//2-200-10, 65-ICON_SIZE-10))
+        background.blit(img_icon_spo2, (BASE_WIDTH//2-200-5, 65-ICON_SIZE-10))
         draw_txt(background, f"{int(spo2)}%", font_ui, (0,200,100) if spo2>=SPO2_WIN_THRESHOLD else (255,80,80), (0,0,0), BASE_WIDTH//2-200+ICON_SIZE+10, 65-ICON_SIZE-5)
 
         ct = pygame.time.get_ticks()
@@ -621,7 +621,7 @@ while play:
             
             # 타이틀(성공/실패 이미지) 삽입
             tit = img_title_success if is_success else img_title_gameover
-            if tit: background.blit(tit, tit.get_rect(center=(BASE_WIDTH//2, by+80)))
+            if tit: background.blit(tit, tit.get_rect(center=(BASE_WIDTH//2, by+80))) 
             else: draw_txt(background, "SUCCESS!" if is_success else "GAME OVER", font_title, (100,255,100) if is_success else (255,80,80), (0,0,0), BASE_WIDTH//2-font_title.size("SUCCESS!" if is_success else "GAME OVER")[0]//2, by+20)
             
             # 최종 점수 삽입
@@ -632,7 +632,7 @@ while play:
             c_sp = (0,200,100) if spo2>=SPO2_WIN_THRESHOLD else (255,80,80)
             sp_txt = f"SpO2 Normal ({int(spo2)}%)" if spo2>=SPO2_WIN_THRESHOLD else f"SpO2 Danger! ({int(spo2)}%)"
             sx = BASE_WIDTH//2 - (ICON_SIZE+10+font_ui.size(sp_txt)[0])//2
-            background.blit(img_icon_spo2, (sx, by+330)); draw_txt(background, sp_txt, font_ui, c_sp, (0,0,0), sx+ICON_SIZE+10, by+330)
+            background.blit(img_icon_spo2, (sx-10, by+325)); draw_txt(background, sp_txt, font_ui, c_sp, (0,0,0), sx+ICON_SIZE+10, by+330)
             draw_bar(background, BASE_WIDTH//2-150, by+380, 300, 24, spo2/100.0, c_sp)
             
             # 버튼(다시하기, 종료) 삽입
