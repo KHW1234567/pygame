@@ -20,7 +20,7 @@ TIME_LIMIT = 60               # 게임 시간 제한 (초)
 SCALE_ALVEOLUS = 0.35         # 플레이어(폐포 병사)
 SCALE_BULLET = 0.3            # 총알
 SCALE_DUST = 0.3              # 적군: 먼지
-SCALE_FOOD = 0.5              # 적군: 고지방/고당분
+SCALE_FOOD = 0.6              # 적군: 고지방/고당분
 SCALE_CIGARETTE = 0.7         # 적군: 담배
 SCALE_BOSS = 1              # 적군: 보스
 SCALE_BROCCOLI = 0.4          # 아이템: 브로콜리
@@ -30,7 +30,7 @@ NEBULIZER_EFFECT_SCALE = 0.5  # 네불라이저 발동 시 화면에 뜨는 팝�
 
 # 이동 속도
 PLAYER_BASE_SPEED = 3         # 플레이어 좌우 이동 기본 속도
-BULLET_SPEED = 10              # 발사된 총알이 위로 날아가는 속도
+BULLET_SPEED = 9              # 발사된 총알이 위로 날아가는 속도
 DUST_SPEED = 2.0              # 먼지가 다가오는 속도
 FOOD_SPEED = 1.5              # 고지방/고당분
 CIGARETTE_SPEED = 1.0         # 담배
