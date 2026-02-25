@@ -1,6 +1,13 @@
 import pygame
 import random
+
+# 실행파일(.exe)을 위한 코드 추가
 import os
+import sys
+
+def resource_path(relative_path):
+    base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
 
 # =====================================================
 # 1. 수치 조절: 게임 밸런스 및 난이도 조절을 위한 상수 값 설정
@@ -112,11 +119,11 @@ BOSS_HP_BAR_H = 15               # 보스 체력바 세로 높이
 ICON_SIZE = 32                   # 화면 상단 정보 UI(별, 시계, 산소) 아이콘 크기
 
 # =====================================================
-# PATH (파일 경로 설정)
+# PATH (파일 경로 설정) 수정
 # =====================================================
-IMG_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\image\\"     # 이미지 파일 폴더 경로
-SOUND_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\sound\\"   # 사운드 파일 폴더 경로
-FONT_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\font\\"     # 폰트 파일 폴더 경로
+IMG_PATH = resource_path("image") + os.sep     # 이미지 파일 폴더 경로
+SOUND_PATH = resource_path("sound") + os.sep   # 사운드 파일 폴더 경로
+FONT_PATH = resource_path("font") + os.sep     # 폰트 파일 폴더 경로
 
 # =====================================================
 # 2. INIT / DISPLAY (Pygame 초기화 및 화면 크기 설정)
