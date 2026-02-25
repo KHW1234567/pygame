@@ -22,7 +22,7 @@ SCALE_BULLET = 0.3            # 총알
 SCALE_DUST = 0.3              # 적군: 먼지
 SCALE_FOOD = 0.5              # 적군: 고지방/고당분
 SCALE_CIGARETTE = 0.7         # 적군: 담배
-SCALE_BOSS = 1.2              # 적군: 보스
+SCALE_BOSS = 1              # 적군: 보스
 SCALE_BROCCOLI = 0.3          # 아이템: 브로콜리
 SCALE_WATER = 0.3             # 아이템: 물
 NEBULIZER_SCALE = 0.15        # 필살기: 네불라이저
@@ -40,13 +40,13 @@ WATER_SPEED = 2.5             # 물
 NEBULIZER_SPEED = 2.0         # 네불라이저
 
 # 스폰 (등장 및 생성 주기)
-DUST_SPAWN_INTERVAL = 0.15             # 먼지가 생성되는 간격
+DUST_SPAWN_INTERVAL = 0.1             # 먼지가 생성되는 간격
 FOOD_SPAWN_START = 10                  # 고지방/고단백 처음 등장하기 시작하는 시간 (10초 후)
-FOOD_SPAWN_INTERVAL = 1                # 고지방/고단백 생성되는 간격
+FOOD_SPAWN_INTERVAL = 0.5                # 고지방/고단백 생성되는 간격
 CIGARETTE_SPAWN_START = 15             # 담배가 처음 등장하기 시작하는 시간 (15초 후)
-CIGARETTE_SPAWN_INTERVAL = 2           # 담배가 생성되는 간격
-BROCCOLI_SPAWN_INTERVAL = 2            # 브로콜리 아이템 생성 간격
-WATER_SPAWN_INTERVAL = 5               # 물 아이템 생성 간격
+CIGARETTE_SPAWN_INTERVAL = 1           # 담배가 생성되는 간격
+BROCCOLI_SPAWN_INTERVAL = 3.5            # 브로콜리 아이템 생성 간격
+WATER_SPAWN_INTERVAL = 2               # 물 아이템 생성 간격
 NEBULIZER_SPAWN_TIMES = [18, 33, 48]   # 네불라이저가 떨어지는 특정 시간대(초) 리스트
 
 # 보스 스폰 관련 (초 단위)
@@ -57,9 +57,9 @@ BOSS_WARNING_SEC = 3             # 보스 등장 경고창(Warning)이 화면에
 
 # 적군 체력 설정
 DUST_HP = 1                      # 먼지
-FOOD_HP = 3                      # 고지방/고당분
-CIGARETTE_HP = 5                 # 담배
-BOSS_HP = 70                     # 보스
+FOOD_HP = 6                     # 고지방/고당분
+CIGARETTE_HP = 10                 # 담배
+BOSS_HP = 100                     # 보스
 
 # 처치 시 획득 점수
 SCORE_DUST = 1                   # 먼지
@@ -100,9 +100,9 @@ ICON_SIZE = 32                   # 화면 상단 정보 UI(별, 시계, 산소) 
 # =====================================================
 # PATH (파일 경로 설정)
 # =====================================================
-IMG_PATH = "C:\\python\\MedicalDA05_pygame-ver2-\\image\\"     # 이미지 파일 폴더 경로
-SOUND_PATH = "C:\\python\\MedicalDA05_pygame-ver2-\\sound\\"   # 사운드 파일 폴더 경로
-FONT_PATH = "C:\\python\\MedicalDA05_pygame-ver2-\\font\\"     # 폰트 파일 폴더 경로
+IMG_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\image\\"     # 이미지 파일 폴더 경로
+SOUND_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\sound\\"   # 사운드 파일 폴더 경로
+FONT_PATH = "D:\\MHH\\python\\MedicalDA05_pygame-ver2-\\font\\"     # 폰트 파일 폴더 경로
 
 # =====================================================
 # 2. INIT / DISPLAY (Pygame 초기화 및 화면 크기 설정)
