@@ -659,8 +659,8 @@ while play:
         # ------------------
         if is_over or is_success:
             
-            if is_over:
-                spo2 = 0
+            # if is_over:
+            #     spo2 = 0
                 
             if not sound_end:   # 1회만 음악 멈추고 효과음 재생
                 pygame.mixer.music.stop(); (sfx_success.play() if is_success and sfx_success else sfx_fail.play() if sfx_fail else None); sound_end = True
