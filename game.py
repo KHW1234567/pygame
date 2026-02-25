@@ -12,7 +12,7 @@ FPS = 60                      # 초당 프레임 수 (게임 속도 기준)
 
 # SpO2 및 시간 관련
 SPO2_START = 100              # 게임 시작 시 초기 산소포화도(SpO2) 수치
-SPO2_DECAY_PER_SEC = 4        # 1초당 감소하는 산소포화도 수치 (100부터 1초마다 4씩 감소)
+SPO2_DECAY_PER_SEC = 5        # 1초당 감소하는 산소포화도 수치 (100부터 1초마다 4씩 감소)
 SPO2_WIN_THRESHOLD = 90       # 제한시간 내에 유지해야 하는 최소 SpO2 수치 (90% 이상이면 성공)
 TIME_LIMIT = 60               # 게임 시간 제한 (초)
 
@@ -22,14 +22,14 @@ SCALE_BULLET = 0.3            # 총알
 SCALE_DUST = 0.3              # 적군: 먼지
 SCALE_FOOD = 0.6              # 적군: 고지방/고당분
 SCALE_CIGARETTE = 0.7         # 적군: 담배
-SCALE_BOSS = 1              # 적군: 보스
-SCALE_BROCCOLI = 0.4          # 아이템: 브로콜리
-SCALE_WATER = 0.4             # 아이템: 물
+SCALE_BOSS = 1                # 적군: 보스
+SCALE_BROCCOLI = 0.45          # 아이템: 브로콜리
+SCALE_WATER = 0.45             # 아이템: 물
 NEBULIZER_SCALE = 0.15        # 필살기: 네불라이저
 NEBULIZER_EFFECT_SCALE = 0.5  # 네불라이저 발동 시 화면에 뜨는 팝업 이펙트 이미지
 
 # 이동 속도
-PLAYER_BASE_SPEED = 3         # 플레이어 좌우 이동 기본 속도
+PLAYER_BASE_SPEED = 4        # 플레이어 좌우 이동 기본 속도
 BULLET_SPEED = 9              # 발사된 총알이 위로 날아가는 속도
 DUST_SPEED = 2.0              # 먼지가 다가오는 속도
 FOOD_SPEED = 1.5              # 고지방/고당분
@@ -40,14 +40,14 @@ WATER_SPEED = 2.5             # 물
 NEBULIZER_SPEED = 2.0         # 네불라이저
 
 # 스폰 (등장 및 생성 주기)
-DUST_SPAWN_INTERVAL = 0.1             # 먼지가 생성되는 간격
+DUST_SPAWN_INTERVAL = 0.15            # 먼지가 생성되는 간격
 FOOD_SPAWN_START = 10                  # 고지방/고단백 처음 등장하기 시작하는 시간 (10초 후)
-FOOD_SPAWN_INTERVAL = 0.5                # 고지방/고단백 생성되는 간격
+FOOD_SPAWN_INTERVAL = 1                # 고지방/고단백 생성되는 간격
 CIGARETTE_SPAWN_START = 15             # 담배가 처음 등장하기 시작하는 시간 (15초 후)
-CIGARETTE_SPAWN_INTERVAL = 1           # 담배가 생성되는 간격
-BROCCOLI_SPAWN_INTERVAL = 3            # 브로콜리 아이템 생성 간격
-WATER_SPAWN_INTERVAL = 2               # 물 아이템 생성 간격
-NEBULIZER_SPAWN_TIMES = [18, 33, 48]   # 네불라이저가 떨어지는 특정 시간대(초) 리스트
+CIGARETTE_SPAWN_INTERVAL = 1.5           # 담배가 생성되는 간격
+BROCCOLI_SPAWN_INTERVAL = 1.5            # 브로콜리 아이템 생성 간격
+WATER_SPAWN_INTERVAL = 2.1              # 물 아이템 생성 간격
+NEBULIZER_SPAWN_TIMES = [18, 28, 45]   # 네불라이저가 떨어지는 특정 시간대(초) 리스트
 
 # 보스 스폰 관련 (초 단위)
 BOSS_FIRST_DELAY = 20            # 게임 시작 후 보스가 최초로 등장하기까지 걸리는 시간
@@ -55,17 +55,28 @@ BOSS_INTERVAL = 15               # 보스 연속 등장 간격
 BOSS_MAX_SPAWN = 3               # 한 게임당 등장할 수 있는 보스 최대 횟수
 BOSS_WARNING_SEC = 3             # 보스 등장 경고창(Warning)이 화면에 유지되는 시간
 
-# 적군 체력 설정
-DUST_HP = 1                      # 먼지
-FOOD_HP = 6                     # 고지방/고당분
-CIGARETTE_HP = 10                 # 담배
-BOSS_HP = 100                     # 보스
+# =====================================================
+# [수정됨: 1. 적군 및 보스 체력 설정 (스케일링 기능 추가)]
+# =====================================================
+# 일반 적군 기본 체력
+DUST_HP_BASE = 1                 # 먼지 기본 체력
+FOOD_HP_BASE = 2                 # 고지방/고당분 기본 체력
+CIGARETTE_HP_BASE = 4            # 담배 기본 체력
+
+# 시간에 따른 일반 적군 체력 증가량 설정 (난이도 조절)
+ENEMY_HP_SCALE_PER_SEC = 0.1     # 1초가 지날 때마다 증가하는 적군의 추가 체력 (예: 0.1이면 10초 뒤 스폰되는 적은 체력이 1만큼 강해짐)
+
+# 보스 등장 순서별 체력 설정 (리스트 형태)
+# 예: 첫 번째 보스 100, 두 번째 보스 150, 세 번째 보스 250
+BOSS_HP_LIST = [100, 200, 300]   
+
+# =====================================================
 
 # 처치 시 획득 점수
 SCORE_DUST = 1                   # 먼지
-SCORE_FOOD = 3                   # 고지방/고당분
-SCORE_CIGARETTE = 5              # 담배
-SCORE_BOSS = 10                  # 보스
+SCORE_FOOD = 6                   # 고지방/고당분
+SCORE_CIGARETTE = 10              # 담배
+SCORE_BOSS = 100                  # 보스
 
 # 처치 시 회복되는 산소포화도(SpO2)
 SPO2_GAIN_DUST = 1               # 먼지
@@ -77,10 +88,13 @@ SPO2_GAIN_BOSS = 10              # 보스
 BROCCOLI_MAX_STACK = 30               # 브로콜리를 먹고 늘어날 수 있는 최대 병사 수
 ROW_CAPACITY = 10                     # 한 줄에 배치되는 최대 병사 수 (10명이 넘으면 윗줄로 쌓임)
 BROCCOLI_INSERT_OFFSET_RATIO = 0.33   # 새로운 병사(폐포)가 왼쪽으로 추가되는 간격 (기존 병사의 33% 정도 겹치게 배치)
-WATER_SPEED_GAIN = 1                  # 물을 먹었을 때 증가하는 플레이어 이동 속도 (1씩 증가)
+WATER_SPEED_GAIN = 0.25                  # 물을 먹었을 때 증가하는 플레이어 이동 속도 (0.25씩 증가)
+
+PLAYER_BASE_DAMAGE = 1                # 플레이어 총알 1발의 기본 데미지
+BROCCOLI_DAMAGE_GAIN = 0              # 브로콜리를 먹었을 때 올라가는 공격력 수치 (현재 0, 필요 시 숫자 UP)
 
 # 네불라이저(필살기) 관련 설정
-NEBULIZER_ALL_ENEMY_HP_DEC = 5        # 네불라이저 획득 시 모든 적의 체력을 깎는 수치
+NEBULIZER_ALL_ENEMY_HP_DEC = 50        # 네불라이저 획득 시 모든 적의 체력을 깎는 수치
 NEBULIZER_EFFECT_DURATION_MS = 1000   # 네불라이저 화면 플래시 이펙트 유지 시간 (밀리초)
 
 # 필살기 효과로 적에게 입히는 피해량을 숫자로 보여주는 팝업 관련 설정
@@ -171,7 +185,6 @@ img_nebulizer_effect = load_img(IMG_PATH+"effect_nebulizer.png", NEBULIZER_EFFEC
 img_bg = pygame.transform.scale(load_img(IMG_PATH+"background.png"), (BASE_WIDTH, BASE_HEIGHT))
 img_icon_star = pygame.transform.scale(load_img(IMG_PATH+"star.png"), (ICON_SIZE, ICON_SIZE))
 img_icon_time = pygame.transform.scale(load_img(IMG_PATH+"time.png"), (ICON_SIZE, ICON_SIZE))
-# img_icon_spo2 = pygame.transform.scale(load_img(IMG_PATH+"o2.png"), (ICON_SIZE, ICON_SIZE))
 img_icon_spo2 = pygame.transform.scale(load_img(IMG_PATH+"o2.png"), (45, 45))
 
 # 인게임 플레이어, 적군, 아이템 이미지 로드
@@ -280,20 +293,26 @@ def draw_hp(surf, x, y, hp, m_hp, is_boss=False):
 # =====================================================
 def reset_game():
     """게임 재시작 시 관련된 모든 데이터(위치, 스폰 시간, 체력 등)를 초기 상태로 되돌립니다."""
-    global p_list, bullet_list, to_x, move_speed, spo2                    # 플레이어, 총알, 이동좌표, 이동속도, spo2
+    global p_list, bullet_list, to_x, move_speed, spo2, bullet_damage                     
     global e_list, boss_data, itm_list, f_txts, neb_data, dmg_pops        # 적군들, 아이템, 떠오르는 텍스트, 네불라이저, 데미지 팝업
     global is_over, is_success, score, t_start, sec, t_spawn, sound_end   # 실패, 성공, 점수, 시간, 스폰, 사운드
 
     # 플레이어(폐포 병사) 초기 리스트 세팅: 화면 하단 중앙 위치 지정
     p_list = [[BASE_WIDTH/2 - w_p/2, BASE_HEIGHT - h_p - 20]] 
     to_x, move_speed, spo2 = 0, PLAYER_BASE_SPEED, SPO2_START   # 이동 변수, 이동 속도, 초기 산소포화도
+    bullet_damage = PLAYER_BASE_DAMAGE  # 게임 리셋 시 현재 공격력을 기본 공격력으로 세팅
     bullet_list = []   # 발사된 총알들을 담는 리스트 [x, y]
 
-    # 적군 리스트: 먼지, 고지방/고당분, 담배를 딕셔너리로 분류하여 관리 (내부 요소: [x, y, hp])
+    # 적군 리스트: 먼지, 고지방/고당분, 담배를 딕셔너리로 분류하여 관리 (내부 요소: [x, y, hp, max_hp])
+    # [수정됨: 2. 적군 리스트에 max_hp를 기억할 수 있도록 데이터 구조 변경 준비]
     e_list = {'dust':[], 'food':[], 'cig':[]}
     
+    # [수정됨: 3. 보스 초기화 시 첫 번째 보스 체력(BOSS_HP_LIST[0]) 할당]
+    initial_boss_hp = BOSS_HP_LIST[0] if len(BOSS_HP_LIST) > 0 else BOSS_HP
+    
     # 보스 관련 통합 데이터 딕셔너리
-    boss_data = {'hp':BOSS_HP, 'alive':False, 'x':0, 'y':0, 'warn':False, 't_warn':0, 't_last':0, 'imgs':img_bosses.copy(), 'cnt':0, 'cur':img_bosses[0]}
+    boss_data = {'hp':initial_boss_hp, 'max_hp':initial_boss_hp, 'alive':False, 'x':0, 'y':0, 
+                 'warn':False, 't_warn':0, 't_last':0, 'imgs':img_bosses.copy(), 'cnt':0, 'cur':img_bosses[0]}
     
     # 아이템 및 UI 이펙트 관련 리스트
     itm_list = {'broc':[], 'water':[]}   # 브로콜리, 물 좌표
@@ -399,35 +418,58 @@ while play:
             # --- 스폰 관리 로직 ---
             all_e = e_list['dust'] + e_list['cig'] + e_list['food']   # 생성된 적 전체 리스트 병합 (위치 겹침 확인용)
             
-            # 먼지 스폰 주기 체크 및 생성
+            # [수정됨: 4. 시간에 따른 스케일링된 체력 계산 로직 적용 (sec * SCALE_PER_SEC)]
+            # 체력은 소수점이 될 수 없으므로 int()로 정수형으로 변환합니다.
+            scaled_dust_hp = DUST_HP_BASE + int(sec * ENEMY_HP_SCALE_PER_SEC)
+            scaled_food_hp = FOOD_HP_BASE + int(sec * ENEMY_HP_SCALE_PER_SEC)
+            scaled_cig_hp = CIGARETTE_HP_BASE + int(sec * ENEMY_HP_SCALE_PER_SEC)
+            
+            # 먼지 스폰 주기 체크 및 생성 (생성 시 배열에 [x, y, 현재체력, 최대체력] 저장)
             if sec - t_spawn['dust'] >= DUST_SPAWN_INTERVAL:
-                t_spawn['dust'] = sec; e_list['dust'].append([get_non_overlap_x(all_e, w_d), 0, DUST_HP])
+                t_spawn['dust'] = sec
+                e_list['dust'].append([get_non_overlap_x(all_e, w_d), 0, scaled_dust_hp, scaled_dust_hp])
+                
             # 고지방/고당분 등장 조건(시작 후 특정 시간 지남) 및 주기 체크 생성
             if sec >= FOOD_SPAWN_START and int(sec) - t_spawn['food'] >= FOOD_SPAWN_INTERVAL:
-                t_spawn['food'] = int(sec); e_list['food'].append([get_non_overlap_x(all_e, w_f), 0, FOOD_HP])
+                t_spawn['food'] = int(sec)
+                e_list['food'].append([get_non_overlap_x(all_e, w_f), 0, scaled_food_hp, scaled_food_hp])
+                
             # 담배 등장 조건(시작 후 특정 시간 지남) 및 주기 체크 생성
             if sec >= CIGARETTE_SPAWN_START and int(sec) - t_spawn['cig'] >= CIGARETTE_SPAWN_INTERVAL:
-                t_spawn['cig'] = int(sec); e_list['cig'].append([get_non_overlap_x(all_e, w_c), 0, CIGARETTE_HP])
+                t_spawn['cig'] = int(sec)
+                e_list['cig'].append([get_non_overlap_x(all_e, w_c), 0, scaled_cig_hp, scaled_cig_hp])
             
             # 보스 등장 조건 검사 (생존한 보스가 없고, 대기열에 보스가 남았으며, 지정된 시간이 지났을 때)
             if (not boss_data['alive'] and boss_data['imgs'] and boss_data['cnt'] < BOSS_MAX_SPAWN 
                 and int(sec)-boss_data['t_last'] >= BOSS_INTERVAL and sec >= BOSS_FIRST_DELAY):
                 if sfx_boss_warning: sfx_boss_warning.play()   # 경고음 재생
+                
+                # [수정됨: 5. 등장할 보스 순번(cnt)에 맞게 BOSS_HP_LIST에서 체력을 가져옴]
+                # 만약 리스트에 설정된 값보다 등장 횟수가 많아지면 리스트의 마지막 값을 사용하도록 예외 처리
+                current_boss_hp = BOSS_HP_LIST[boss_data['cnt']] if boss_data['cnt'] < len(BOSS_HP_LIST) else BOSS_HP_LIST[-1]
+                
                 # 보스 상태 활성화 및 데이터 갱신
                 boss_data.update({'alive':True, 'warn':True, 't_warn':pygame.time.get_ticks(), 't_last':int(sec), 
-                                  'x':random.randrange(0, BASE_WIDTH//2-w_boss), 'y':0, 'hp':BOSS_HP})
+                                  'x':random.randrange(0, max(1, BASE_WIDTH//2-w_boss)), 'y':0, 
+                                  'hp':current_boss_hp, 'max_hp':current_boss_hp}) # 체력 갱신
+                
                 boss_data['cur'] = random.choice(boss_data['imgs']); boss_data['imgs'].remove(boss_data['cur'])
                 boss_data['cnt'] += 1
 
-            # 아이템 스폰 처리
-            all_i = itm_list['broc'] + itm_list['water']
+            # 아이템 스폰 처리 (겹침 방지 개선)
             if int(sec) - t_spawn['broc'] >= BROCCOLI_SPAWN_INTERVAL:
                 t_spawn['broc'] = int(sec)
-                # 아이템은 화면 오른쪽 절반 구역에서 등장하도록 start_x 조절
-                itm_list['broc'].append([get_non_overlap_x(all_i, w_broc, BASE_WIDTH//2, BASE_WIDTH-w_broc, 40), 0])
+                # 현재 존재하는 아이템 리스트 실시간 갱신
+                all_i = itm_list['broc'] + itm_list['water']
+                # 여백(min_gap)을 80으로 늘려 충분히 떨어지게 스폰
+                itm_list['broc'].append([get_non_overlap_x(all_i, w_broc, BASE_WIDTH//2, BASE_WIDTH-w_broc, 80), 0])
+                
             if int(sec) - t_spawn['water'] >= WATER_SPAWN_INTERVAL:
                 t_spawn['water'] = int(sec)
-                itm_list['water'].append([get_non_overlap_x(all_i, w_w, BASE_WIDTH//2, BASE_WIDTH-w_w, 40), 0])
+                # 브로콜리가 방금 생성되었을 수 있으므로 리스트를 다시 한번 갱신하여 겹침 방지
+                all_i = itm_list['broc'] + itm_list['water']
+                # 여백(min_gap)을 80으로 늘려 충분히 떨어지게 스폰
+                itm_list['water'].append([get_non_overlap_x(all_i, w_w, BASE_WIDTH//2, BASE_WIDTH-w_w, 80), 0])
             
             # 네불라이저 스폰 처리
             for t in NEBULIZER_SPAWN_TIMES:
@@ -448,15 +490,18 @@ while play:
                     for p in p_list: p[0] -= (mx - (BASE_WIDTH - w_p))
 
             # --- 몬스터(먼지, 고지방/고당분, 담배) 물리 처리 (이동, 렌더링, 플레이어 충돌) ---
-            # 각 적군 속성을 튜플 리스트로 묶어 코드 반복을 줄임
-            e_info = [('dust', img_dust, w_d, h_d, DUST_SPEED, DUST_HP, SCORE_DUST, SPO2_GAIN_DUST),
-                      ('food', img_food, w_f, h_f, FOOD_SPEED, FOOD_HP, SCORE_FOOD, SPO2_GAIN_FOOD),
-                      ('cig', img_cigarette, w_c, h_c, CIGARETTE_SPEED, CIGARETTE_HP, SCORE_CIGARETTE, SPO2_GAIN_CIGARETTE)]
+            # 각 적군 속성을 튜플 리스트로 묶어 코드 반복을 줄임 (체력 인자는 mhp 대신 점수와 회복량만 전달)
+            # [수정됨: 6. 체력을 그릴 때 고정값 대신 배열에 저장된 최대체력(e[3])을 이용해 게이지 바 렌더링]
+            e_info = [('dust', img_dust, w_d, h_d, DUST_SPEED, SCORE_DUST, SPO2_GAIN_DUST),
+                      ('food', img_food, w_f, h_f, FOOD_SPEED, SCORE_FOOD, SPO2_GAIN_FOOD),
+                      ('cig', img_cigarette, w_c, h_c, CIGARETTE_SPEED, SCORE_CIGARETTE, SPO2_GAIN_CIGARETTE)]
             
-            for key, img, w, h, spd, mhp, sc, s_gn in e_info:
+            for key, img, w, h, spd, sc, s_gn in e_info:
                 for e in e_list[key][:]:   # 복사본[:]을 순회하며 원본 리스트를 안전하게 삭제
                     e[1] += spd; background.blit(img, (e[0], e[1]))   # 위치 증가 후 그리기
-                    draw_hp(background, e[0]+w/2-MINI_HP_BAR_W/2, e[1]-12, e[2], mhp)   # 체력바 그리기
+                    
+                    # 스케일링으로 늘어난 최대 체력(e[3])을 기준으로 체력바 그리기
+                    draw_hp(background, e[0]+w/2-MINI_HP_BAR_W/2, e[1]-12, e[2], e[3])   
                     
                     hit = False; rect = pygame.Rect(e[0], e[1], w, h)   # 적군 히트박스 생성
                     for p in p_list[:]:   # 병사들과의 충돌 검사
@@ -473,7 +518,9 @@ while play:
             # --- 보스 이동 및 물리 처리 ---
             if boss_data['alive']:
                 boss_data['y'] += BOSS_SPEED; background.blit(boss_data['cur'], (boss_data['x'], boss_data['y']))
-                draw_hp(background, boss_data['x']+w_boss/2-BOSS_HP_BAR_W/2, boss_data['y']-25, boss_data['hp'], BOSS_HP, True)
+                
+                # [수정됨: 7. 보스도 자신의 고유 최대 체력(max_hp)을 기준으로 체력바 렌더링]
+                draw_hp(background, boss_data['x']+w_boss/2-BOSS_HP_BAR_W/2, boss_data['y']-25, boss_data['hp'], boss_data['max_hp'], True)
                 rect = pygame.Rect(boss_data['x'], boss_data['y'], w_boss, h_boss)
                 for p in p_list[:]:
                     if rect.colliderect(pygame.Rect(p[0], p[1], w_p, h_p)):
@@ -498,6 +545,9 @@ while play:
                             itm_list[key].remove(i)   # 획득한 아이템 삭제
                             if key == 'broc':   # 브로콜리 획득 시 병사 수 증가 및 자리 재배치
                                 f_txts.append([p[0], p[1], "Squad +1", (0, 255, 50), pygame.time.get_ticks()])
+                                
+                                bullet_damage += BROCCOLI_DAMAGE_GAIN 
+                                
                                 if len(p_list) < BROCCOLI_MAX_STACK:
                                     ox, oy = w_p*BROCCOLI_INSERT_OFFSET_RATIO, h_p*0.6
                                     if len(p_list)%ROW_CAPACITY == 0: 
@@ -521,11 +571,11 @@ while play:
                 if any(rect.colliderect(pygame.Rect(p[0], p[1], w_p, h_p)) for p in p_list):
                     if sfx_nebulizer: sfx_nebulizer.play()
                     # 병사 머리 위에 데미지 알림 팝업 추가
-                    f_txts.append([p_list[0][0], p_list[0][1], "DAMAGE ALL -5", (0,220,255), pygame.time.get_ticks()])
+                    f_txts.append([p_list[0][0], p_list[0][1], f"DAMAGE ALL -{NEBULIZER_ALL_ENEMY_HP_DEC}", (0,220,255), pygame.time.get_ticks()])
                     neb_data['list'].remove(neb); neb_data.update({'on':True, 't_on':pygame.time.get_ticks()})   # 획득 시 플래시 효과 발동
                     
-                    # 화면에 있는 모든 적의 체력 5 감소
-                    for k,_,w,_,_,_,sc,sgn in e_info:
+                    # 화면에 있는 모든 적의 체력 감소
+                    for k,_,w,_,_,sc,sgn in e_info:
                         for e in e_list[k][:]:
                             e[2] -= NEBULIZER_ALL_ENEMY_HP_DEC; dmg_pops.append((e[0]+w//2, e[1], pygame.time.get_ticks()))   # 데미지 숫자 이펙트 추가
                             if e[2] <= 0: e_list[k].remove(e); score += sc; spo2 = min(100, spo2 + sgn)   # 체력 0 이하면 파괴 처리
@@ -540,17 +590,18 @@ while play:
                 
                 hit = False
                 # 총알의 좌표를 일반 적들의 박스 좌표와 비교하여 명중 확인
-                for k,_,w,h,_,_,sc,sgn in e_info:
+                for k,_,w,h,_,sc,sgn in e_info:
                     for e in e_list[k][:]:
                         if e[0] < b[0] < e[0]+w and e[1] < b[1] < e[1]+h:
-                            e[2]-=1; bullet_list.remove(b); hit=True   # 적 체력 감소 후 총알 파괴
+                            e[2] -= bullet_damage; bullet_list.remove(b); hit=True   
                             if e[2]<=0: e_list[k].remove(e); score+=sc; spo2 = min(100, spo2+sgn)
                             break
                     if hit: break
                 if hit: continue
+                
                 # 보스와의 총알 명중 판정
                 if boss_data['alive'] and boss_data['x'] < b[0] < boss_data['x']+w_boss and boss_data['y'] < b[1] < boss_data['y']+h_boss:
-                    boss_data['hp']-=1; bullet_list.remove(b)
+                    boss_data['hp'] -= bullet_damage; bullet_list.remove(b)
                     if boss_data['hp']<=0: boss_data['alive']=False; score+=SCORE_BOSS; spo2 = min(100, spo2+SPO2_GAIN_BOSS)
 
         # ------------------
@@ -589,14 +640,14 @@ while play:
                 if img_warning_boss: background.blit(img_warning_boss, img_warning_boss.get_rect(center=(BASE_WIDTH/2, BASE_HEIGHT/2-200)))
                 else: txt = font_bg.render("BOSS WARNING !!!", True, (255,255,0)); background.blit(txt, (BASE_WIDTH/2-txt.get_width()/2, BASE_HEIGHT/2-200))
 
-        # 네불라이저 발동 시 푸른색 화면 플래시 연출
+        # 네블라이저 발동 시 푸른색 화면 플래시 연출
         if neb_data['on']:
             if ct - neb_data['t_on'] > NEBULIZER_EFFECT_DURATION_MS: neb_data['on'] = False
             else:
                 fl = pygame.Surface((BASE_WIDTH, BASE_HEIGHT)); fl.set_alpha(90); fl.fill((0,220,255)); background.blit(fl, (0,0))
                 if img_nebulizer_effect: background.blit(img_nebulizer_effect, img_nebulizer_effect.get_rect(center=(BASE_WIDTH/2, 400)))
 
-        # 네불라이저 데미지 팝업 애니메이션 
+        # 네블라이저 데미지 팝업 애니메이션 
         for d in dmg_pops[:]:
             dt = ct - d[2]
             if dt > POPUP_LIFETIME_MS: dmg_pops.remove(d); continue
@@ -608,6 +659,9 @@ while play:
         # ------------------
         if is_over or is_success:
             
+            if is_over:
+                spo2 = 0
+                
             if not sound_end:   # 1회만 음악 멈추고 효과음 재생
                 pygame.mixer.music.stop(); (sfx_success.play() if is_success and sfx_success else sfx_fail.play() if sfx_fail else None); sound_end = True
             
