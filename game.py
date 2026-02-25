@@ -171,7 +171,8 @@ img_nebulizer_effect = load_img(IMG_PATH+"effect_nebulizer.png", NEBULIZER_EFFEC
 img_bg = pygame.transform.scale(load_img(IMG_PATH+"background.png"), (BASE_WIDTH, BASE_HEIGHT))
 img_icon_star = pygame.transform.scale(load_img(IMG_PATH+"star.png"), (ICON_SIZE, ICON_SIZE))
 img_icon_time = pygame.transform.scale(load_img(IMG_PATH+"time.png"), (ICON_SIZE, ICON_SIZE))
-img_icon_spo2 = pygame.transform.scale(load_img(IMG_PATH+"o2.png"), (ICON_SIZE, ICON_SIZE))
+# img_icon_spo2 = pygame.transform.scale(load_img(IMG_PATH+"o2.png"), (ICON_SIZE, ICON_SIZE))
+img_icon_spo2 = pygame.transform.scale(load_img(IMG_PATH+"o2.png"), (45, 45))
 
 # 인게임 플레이어, 적군, 아이템 이미지 로드
 img_player = load_img(IMG_PATH+"alveolus.png", SCALE_ALVEOLUS)
@@ -563,7 +564,7 @@ while play:
         background.blit(img_icon_star, (20,20)); draw_txt(background, f"{score}", font_ui, (255,215,0), (80,50,0), 20+ICON_SIZE+10, 20)
         background.blit(img_icon_time, (BASE_WIDTH//2-50,20)); draw_txt(background, f"{t_left if 't_left' in locals() else TIME_LIMIT}", font_ui, (255,255,255), (50,50,50), BASE_WIDTH//2-50+ICON_SIZE+10, 20)
         draw_bar(background, BASE_WIDTH//2-200, 65, 400, 24, spo2/100.0, (0,200,100) if spo2>=SPO2_WIN_THRESHOLD else (255,80,80))
-        background.blit(img_icon_spo2, (BASE_WIDTH//2-200, 65-ICON_SIZE-5))
+        background.blit(img_icon_spo2, (BASE_WIDTH//2-200-10, 65-ICON_SIZE-10))
         draw_txt(background, f"{int(spo2)}%", font_ui, (0,200,100) if spo2>=SPO2_WIN_THRESHOLD else (255,80,80), (0,0,0), BASE_WIDTH//2-200+ICON_SIZE+10, 65-ICON_SIZE-5)
 
         ct = pygame.time.get_ticks()
