@@ -23,14 +23,14 @@ SCALE_DUST = 0.3              # 적군: 먼지
 SCALE_FOOD = 0.5              # 적군: 고지방/고당분
 SCALE_CIGARETTE = 0.7         # 적군: 담배
 SCALE_BOSS = 1              # 적군: 보스
-SCALE_BROCCOLI = 0.3          # 아이템: 브로콜리
-SCALE_WATER = 0.3             # 아이템: 물
+SCALE_BROCCOLI = 0.4          # 아이템: 브로콜리
+SCALE_WATER = 0.4             # 아이템: 물
 NEBULIZER_SCALE = 0.15        # 필살기: 네불라이저
 NEBULIZER_EFFECT_SCALE = 0.5  # 네불라이저 발동 시 화면에 뜨는 팝업 이펙트 이미지
 
 # 이동 속도
 PLAYER_BASE_SPEED = 3         # 플레이어 좌우 이동 기본 속도
-BULLET_SPEED = 8              # 발사된 총알이 위로 날아가는 속도
+BULLET_SPEED = 10              # 발사된 총알이 위로 날아가는 속도
 DUST_SPEED = 2.0              # 먼지가 다가오는 속도
 FOOD_SPEED = 1.5              # 고지방/고당분
 CIGARETTE_SPEED = 1.0         # 담배
@@ -45,7 +45,7 @@ FOOD_SPAWN_START = 10                  # 고지방/고단백 처음 등장하기
 FOOD_SPAWN_INTERVAL = 0.5                # 고지방/고단백 생성되는 간격
 CIGARETTE_SPAWN_START = 15             # 담배가 처음 등장하기 시작하는 시간 (15초 후)
 CIGARETTE_SPAWN_INTERVAL = 1           # 담배가 생성되는 간격
-BROCCOLI_SPAWN_INTERVAL = 3.5            # 브로콜리 아이템 생성 간격
+BROCCOLI_SPAWN_INTERVAL = 3            # 브로콜리 아이템 생성 간격
 WATER_SPAWN_INTERVAL = 2               # 물 아이템 생성 간격
 NEBULIZER_SPAWN_TIMES = [18, 33, 48]   # 네불라이저가 떨어지는 특정 시간대(초) 리스트
 
@@ -93,7 +93,7 @@ FLOAT_TEXT_LIFETIME_MS = 800     # 머리 위로 뜨는 텍스트(데미지 등)
 FLOAT_TEXT_RISE_SPEED = 0.05     # 머리 위로 뜨는 텍스트가 위로 올라가는 속도
 MINI_HP_BAR_W = 30               # 적군 미니 체력바 가로 넓이
 MINI_HP_BAR_H = 6                # 적군 미니 체력바 세로 높이
-BOSS_HP_BAR_W = 200              # 보스 체력바 가로 넓이
+BOSS_HP_BAR_W = 100              # 보스 체력바 가로 넓이
 BOSS_HP_BAR_H = 15               # 보스 체력바 세로 높이
 ICON_SIZE = 32                   # 화면 상단 정보 UI(별, 시계, 산소) 아이콘 크기
 
